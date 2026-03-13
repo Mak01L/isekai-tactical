@@ -1061,7 +1061,9 @@ const ROWS  = [1,2,3,4,5,6,7,8,9,10,11,12];
 function factionById(id){ return FACTIONS.find(f=>f.id===id); }
 function warriorById(fid,wid){ return factionById(fid)?.warriors.find(w=>w.id===wid); }
 function rgba(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
-function mkBoard(){ return Array.from({length:12},()=>Array.from({length:12},()=>({wid:null,dead:false,miss:false}))); }
+function mkBoard(){ return Array.from({length:12},()=>Array.from({length:12},()=>({wid:null,dead:false,miss:false,hp:null}))); }
+function calcHP(w){ return 3 + w.def; }
+function calcDmg(atk,def){ return Math.max(2, atk - def + 4); }
 
 // ══════════════════════════════════════════════════════════
 // LOCAL STATE
@@ -1601,40 +1603,28 @@ function renderBattle(v){
   enemyBoardData.forEach(({r,c,wid})=>{ enemyBoardRender[r][c].wid=wid; });
 
   const attacks = v.attacks ? Object.values(v.attacks) : [];
+
+  // Build HP map: key = "r,c,target" → remaining HP
+  const hpMap = {}; // "pid:r:c" → currentHP
+
   attacks.forEach(atk=>{
-    if(atk.target===G.playerId){
-      // Enemy attacked me
-      if(atk.result==='hit'||atk.result==='both'){
-        myBoardRender[atk.r][atk.c].dead=true;
-      } else if(atk.result==='empty'){
-        // Solo marcar vacío — no tocar celdas con personajes vivos
-        myBoardRender[atk.r][atk.c].miss=true;
-      }
-      // result==='miss': el personaje resistió, no se marca nada — sigue vivo y atacable
-    }
-    if(atk.attacker===G.playerId){
-      // I attacked
-      if(atk.result==='hit'||atk.result==='both'){
-        enemyBoardRender[atk.r][atk.c].dead=true;
-      } else if(atk.result==='empty'){
-        // Solo marcar vacío — no tocar celdas con personajes vivos
-        enemyBoardRender[atk.r][atk.c].miss=true;
-      }
-      // result==='miss': el personaje resistió, sigue en su celda y se puede volver a atacar
+    const key = `${atk.target}:${atk.r}:${atk.c}`;
+    if(atk.result==='hit'){
+      // Dead
+      if(atk.target===G.playerId) myBoardRender[atk.r][atk.c].dead=true;
+      else enemyBoardRender[atk.r][atk.c].dead=true;
+    } else if(atk.result==='dmg'){
+      // Damaged but alive — store remaining HP
+      hpMap[key] = atk.defHPafter;
+      // Make sure not marked dead
+    } else if(atk.result==='empty'){
+      if(atk.target===G.playerId) myBoardRender[atk.r][atk.c].miss=true;
+      else enemyBoardRender[atk.r][atk.c].miss=true;
     }
   });
 
-  // Also mark attacker's unit dead on 'both'
-  attacks.forEach(atk=>{
-    if(atk.result==='both'){
-      if(atk.attacker===G.playerId){
-        myBoardRender[atk.ar][atk.ac].dead=true;
-      }
-      if(atk.target===G.playerId){
-        enemyBoardRender[atk.ar][atk.ac].dead=true;
-      }
-    }
-  });
+  // Store hpMap for rendering HP bars
+  window._hpMap = hpMap;
 
   // Turn pill
   const pill=document.getElementById('battle-turn-pill');
@@ -1642,10 +1632,8 @@ function renderBattle(v){
   pill.className='turn-pill'+(isMyTurn?' my-turn':'');
 
   // VS bar
-  const myAlive=myBoardData.length - attacks.filter(a=>a.target===G.playerId&&(a.result==='hit'||a.result==='both')).length
-    - attacks.filter(a=>a.attacker===G.playerId&&a.result==='both').length;
-  const enAlive=enemyBoardData.length - attacks.filter(a=>a.attacker===G.playerId&&(a.result==='hit'||a.result==='both')).length
-    - attacks.filter(a=>a.target===G.playerId&&a.result==='both').length;
+  const myAlive=myBoardData.length - attacks.filter(a=>a.target===G.playerId&&a.result==='hit').length;
+  const enAlive=enemyBoardData.length - attacks.filter(a=>a.attacker===G.playerId&&a.result==='hit').length;
 
   document.getElementById('vs-me').innerHTML=`<span>${f.emblem}</span><span class="vs-alive" style="color:${f.color}">${Math.max(0,myAlive)}</span>`;
   document.getElementById('vs-enemy').innerHTML=`<span class="vs-alive" style="color:${ef.color}">${Math.max(0,enAlive)}</span><span>${ef.emblem}</span>`;
@@ -1657,7 +1645,15 @@ function renderBattle(v){
     else if(d.miss){ cell.classList.add('miss'); cell.innerHTML=`<span style="font-size:10px;color:var(--text3);line-height:1">✕</span>`; }
     else if(d.wid){
       const w=warriorById(G.myFaction,d.wid);
-      cell.innerHTML=`<span class="cell-icon">${w.icon}</span>`;
+      const maxHP=calcHP(w);
+      const hpKey=`${G.playerId}:${ri}:${ci}`;
+      const curHP=(window._hpMap&&window._hpMap[hpKey]!==undefined)?window._hpMap[hpKey]:maxHP;
+      const hpPct=Math.max(0,Math.round((curHP/maxHP)*100));
+      const hpColor=hpPct>60?'#2ecc71':hpPct>30?'#f39c12':'#e74c3c';
+      cell.innerHTML=`<span class="cell-icon">${w.icon}</span>
+        <div style="position:absolute;bottom:2px;left:2px;right:2px;height:3px;background:rgba(0,0,0,.4);border-radius:2px">
+          <div style="width:${hpPct}%;height:100%;background:${hpColor};border-radius:2px;transition:width .3s"></div>
+        </div>`;
       cell.style.background=rgba(f.color,.2); cell.style.borderColor=rgba(f.color,.6);
       if(isMyTurn){
         cell.classList.add('own-unit');
@@ -1673,7 +1669,19 @@ function renderBattle(v){
     if(d.dead){ cell.classList.add('hit'); cell.innerHTML=`<span class="cell-icon">💥</span>`; }
     else if(d.miss){ cell.classList.add('miss'); cell.innerHTML=`<span style="font-size:10px;color:var(--text3);line-height:1">✕</span>`; }
     else{
-      cell.classList.add('fog');
+      // Check if this cell was damaged (HP reduced)
+      const eid2=getEnemyId();
+      const hpKey=`${eid2}:${ri}:${ci}`;
+      const isDamaged=window._hpMap&&window._hpMap[hpKey]!==undefined;
+      if(isDamaged){
+        // Show blood drop indicator — damaged but alive
+        cell.classList.add('fog');
+        cell.innerHTML=`<span style="font-size:11px;color:#ff6060;opacity:.9">🩸</span>`;
+        cell.style.borderColor='rgba(224,53,53,.5)';
+        cell.style.background='rgba(224,53,53,.08)';
+      } else {
+        cell.classList.add('fog');
+      }
       if(isMyTurn&&G.selUnit){ cell.classList.add('target'); cell.onclick=()=>doAttack(ri,ci,v); }
     }
   });
@@ -1682,8 +1690,8 @@ function renderBattle(v){
   const scroll=document.getElementById('battle-warrior-scroll');
   scroll.innerHTML='';
   factionById(G.myFaction).warriors.forEach(w=>{
-    const alive=!myBoardRender.some((row,ri)=>row.some((c,ci)=>c.wid===w.id&&c.dead))
-      && myBoardData.some(d=>d.wid===w.id);
+    const wPos=myBoardData.find(d=>d.wid===w.id);
+    const alive=wPos && !myBoardRender[wPos.r][wPos.c].dead;
     if(!myBoardData.some(d=>d.wid===w.id)) return; // wasn't placed
     const chip=document.createElement('div');
     chip.className='wchip'+(alive?'':' used');
@@ -1723,7 +1731,8 @@ async function doAttack(ri,ci,v){
   const attacks=v.attacks?Object.values(v.attacks):[];
   // Bloquear si ya atacamos esa celda y el resultado fue hit, both o empty
   // Si fue miss (personaje vivo que resistió) se puede volver a atacar
-  if(attacks.some(a=>a.attacker===G.playerId&&a.r===ri&&a.c===ci&&(a.result==='hit'||a.result==='both'||a.result==='empty'))){
+  // Block re-attacking only dead or empty cells
+  if(attacks.some(a=>a.attacker===G.playerId&&a.r===ri&&a.c===ci&&(a.result==='hit'||a.result==='empty'))){
     return;
   }
 
@@ -1737,14 +1746,25 @@ async function doAttack(ri,ci,v){
   if(!atkPos) return;
   const atkW=warriorById(G.myFaction,atkPos.wid);
 
-  let result,defW=null;
+  let result='empty', defW=null, dmg=0, defHPafter=null;
+
   if(targetCell){
-    defW=warriorById(v[eid].faction,targetCell.wid);
-    if(atkW.atk>defW.def) result='hit';
-    else if(atkW.atk===defW.def) result='both';
-    else result='miss';
-  } else {
-    result='empty';
+    defW = warriorById(v[eid].faction, targetCell.wid);
+    dmg  = calcDmg(atkW.atk, defW.def);
+
+    // Calculate current HP of defender from previous attacks
+    const prevDmg = attacks
+      .filter(a=>a.attacker===G.playerId && a.r===ri && a.c===ci && a.dmg)
+      .reduce((s,a)=>s+a.dmg, 0);
+    const maxHP   = calcHP(defW);
+    const curHP   = maxHP - prevDmg;
+    defHPafter    = curHP - dmg;
+
+    if(defHPafter <= 0){
+      result = 'hit'; // defender dies
+    } else {
+      result = 'dmg'; // defender survives, HP reduced
+    }
   }
 
   const atkEntry={
@@ -1753,24 +1773,22 @@ async function doAttack(ri,ci,v){
     r:ri, c:ci,
     ar:G.selUnit.r, ac:G.selUnit.c,
     atkWid:atkPos.wid, defWid:targetCell?.wid||null,
-    result,
+    result, dmg, defHPafter,
     coord
   };
 
   G.selUnit=null;
 
-  // Push attack
   const attacksRef=ref(db,'games/'+G.gameId+'/attacks');
   await push(attacksRef, atkEntry);
 
-  // Check win
+  // Check win — only 'hit' kills
   const newAttacks=[...attacks,atkEntry];
   const enemyDead=enemyBoardData.filter(d=>{
-    return newAttacks.some(a=>a.attacker===G.playerId&&a.r===d.r&&a.c===d.c&&(a.result==='hit'||a.result==='both'));
+    return newAttacks.some(a=>a.attacker===G.playerId&&a.r===d.r&&a.c===d.c&&a.result==='hit');
   }).length;
   const myBoardDead=myBoardData.filter(d=>{
-    return newAttacks.some(a=>a.target===G.playerId&&a.r===d.r&&a.c===d.c&&(a.result==='hit'||a.result==='both'))
-      || newAttacks.some(a=>a.attacker===G.playerId&&a.result==='both'&&a.ar===d.r&&a.ac===d.c);
+    return newAttacks.some(a=>a.target===G.playerId&&a.r===d.r&&a.c===d.c&&a.result==='hit');
   }).length;
 
   const iWon  = enemyDead >= enemyBoardData.length;
@@ -1780,7 +1798,6 @@ async function doAttack(ri,ci,v){
     const winner=iWon&&!iLost?G.playerId:(iLost&&!iWon?eid:'draw');
     await update(G.gameRef,{status:'done',winner});
   } else {
-    // Pass turn
     await update(G.gameRef,{turn:eid});
   }
   switchBoard('mine');
@@ -1800,26 +1817,26 @@ function renderLog(attacks,v){
     const atkName = atkW ? `${atkW.icon}${atkW.name}` : '?';
     const defName = defW ? `${defW.icon}${defW.name}` : '?';
     const atkStats = atkW ? ` (ATK ${atkW.atk})` : '';
-    const defStats = defW ? ` (DEF ${defW.def})` : '';
-    // Was I the one being attacked?
     const iWasTarget = a.target === G.playerId;
+
     if(a.result==='hit'){
       if(iWasTarget){
-        // My unit was killed — red with cross
-        cls='le killed'; txt=`✝ [${a.coord}] ${atkName}${atkStats} mató a ${defName}${defStats}`;
+        cls='le killed'; txt=`✝ [${a.coord}] ${atkName}${atkStats} eliminó a ${defName}`;
       } else {
-        cls='le win'; txt=`✓ [${a.coord}] ${atkName}${atkStats} eliminó a ${defName}${defStats}`;
+        cls='le win'; txt=`⚔ [${a.coord}] ${atkName}${atkStats} eliminó a ${defName}`;
       }
-    } else if(a.result==='both'){
-      cls='le both'; txt=`💥 [${a.coord}] Empate — ${atkName}${atkStats} vs ${defName}${defStats} — ambos caen`;
-    } else if(a.result==='miss'){
+    } else if(a.result==='dmg'){
+      const hpLeft = a.defHPafter||'?';
+      const maxHP  = defW ? calcHP(defW) : '?';
       if(iWasTarget){
-        cls='le defended'; txt=`🛡 [${a.coord}] ${defName}${defStats} bloqueó a ${atkName}${atkStats}`;
+        cls='le lose'; txt=`🩸 [${a.coord}] ${atkName}${atkStats} dañó a ${defName} — HP ${hpLeft}/${maxHP}`;
       } else {
-        cls='le lose'; txt=`✗ [${a.coord}] ${defName}${defStats} resistió a ${atkName}${atkStats}`;
+        cls='le win'; txt=`🩸 [${a.coord}] ${atkName}${atkStats} dañó a ${defName} — HP ${hpLeft}/${maxHP}`;
       }
+    } else if(a.result==='empty'){
+      cls='le'; txt=`· [${a.coord}] Vacío — turno perdido`;
     } else {
-      cls='le'; txt=`· [${a.coord}] Vacío. Turno perdido`;
+      cls='le'; txt=`· [${a.coord}] —`;
     }
     e.className=cls; e.textContent=txt;
     box.appendChild(e);
