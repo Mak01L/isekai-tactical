@@ -906,7 +906,7 @@ function renderBattle(v){
     if(isMyTurn&&alive){
       const pos=myBoardData.find(d=>d.wid===w.id);
       if(pos&&!myBoardRender[pos.r][pos.c].dead){
-        chip.onclick=()=>{ G.selUnit={r:pos.r,c:pos.c}; renderBattle(v); switchBoard('mine'); };
+        chip.onclick=()=>{ G.selUnit={r:pos.r,c:pos.c}; renderBattle(v); switchBoard('enemy'); };
         if(G.selUnit&&G.selUnit.r===pos.r&&G.selUnit.c===pos.c) chip.classList.add('sel-chip');
       }
     }
