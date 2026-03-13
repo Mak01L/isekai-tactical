@@ -773,16 +773,11 @@ let myDeadMap  = {};        // wid->true when dead
 let enemyDeadMap={};
 
 function startBattle(){
-  hideWaiting();
-  showScreen('battle');
   G.selUnit=null;
   G.activeBoard='mine';
-
-  // Reconstruct enemy board from Firebase (only positions, no wids shown)
-  // We keep a local shadow board for rendering hits/misses
   enemyBoard = mkBoard();
 
-  // Read game state and subscribe
+  // Suscribirse al estado del juego en tiempo real
   const unsub=onValue(G.gameRef, snap=>{
     const v=snap.val();
     if(!v) return;
@@ -791,6 +786,7 @@ function startBattle(){
       handleGameOver(v);
       return;
     }
+    // renderBattle siempre oculta el waiting y muestra la batalla
     renderBattle(v);
   });
   G.listeners.push(unsub);
@@ -800,6 +796,9 @@ function getEnemyId(){ return G.playerId==='p1'?'p2':'p1'; }
 
 function renderBattle(v){
   if(!v) return;
+  // Siempre ocultar waiting y mostrar batalla cuando llega un update
+  hideWaiting();
+  showScreen('battle');
   const f  = factionById(G.myFaction);
   const ef = factionById(v[getEnemyId()].faction);
   const isMyTurn = v.turn===G.playerId;
