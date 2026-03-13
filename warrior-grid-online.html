@@ -3,20 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Warrior Grid</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<title>Isekai Tactical</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0a0806; --bg2:#110e0a; --bg3:#1a1510;
-  --border:#3a2e1e; --gold:#c9a84c; --gold2:#e8c96d;
-  --text:#d4c5a0; --text2:#8a7a5a;
-  --red:#c0392b; --green:#27ae60; --orange:#e67e22;
-  --cell: 39px;
+:root{
+  --bg:#05040a; --bg2:#0c0b14; --bg3:#13111e;
+  --bg4:#1a1828;
+  --border:#2a2640; --border2:#3d3860;
+  --gold:#d4a843; --gold2:#f0c866; --gold3:#fff3c0;
+  --text:#ccc4e8; --text2:#7a6fa8; --text3:#4a4570;
+  --red:#e03535; --red2:#ff6060;
+  --green:#2ecc71; --green2:#80ffb4;
+  --orange:#e67e22; --orange2:#ffaa55;
+  --blue:#4a80d9; --purple:#9b59b6;
+  --cell:39px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'EB Garamond',serif;font-size:18px;display:flex;flex-direction:column;}
-body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(201,168,76,.012) 40px,rgba(201,168,76,.012) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(201,168,76,.012) 40px,rgba(201,168,76,.012) 41px);pointer-events:none;z-index:0;}
+
+/* ── ANIMATED BG ── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(100,60,180,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(60,40,120,.10) 0%, transparent 70%),
+    repeating-linear-gradient(0deg,transparent,transparent 44px,rgba(100,80,200,.018) 44px,rgba(100,80,200,.018) 45px),
+    repeating-linear-gradient(90deg,transparent,transparent 44px,rgba(100,80,200,.018) 44px,rgba(100,80,200,.018) 45px);}
 
 /* ── SCREENS ── */
 .screen{display:none;position:fixed;inset:0;z-index:50;overflow-y:auto;background:var(--bg);}
@@ -24,197 +36,264 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 
 /* ── HEADER ── */
 .screen-header{text-align:center;margin-bottom:22px;width:100%;}
-.screen-header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.1rem,5vw,1.8rem);color:var(--gold);text-shadow:0 0 24px rgba(201,168,76,.35);}
-.screen-header::after{content:'';display:block;width:160px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:8px auto 0;}
-.screen-sub{font-family:'Cinzel',serif;font-size:.68rem;color:var(--text2);letter-spacing:.18em;margin-top:4px;}
+.screen-header h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.2rem,5vw,2rem);color:var(--gold2);
+  text-shadow:0 0 30px rgba(212,168,67,.5),0 0 60px rgba(212,168,67,.2);}
+.screen-header::after{content:'';display:block;width:200px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);margin:10px auto 0;}
+.screen-sub{font-family:'Cinzel',serif;font-size:.65rem;color:var(--text2);letter-spacing:.22em;margin-top:6px;text-transform:uppercase;}
 
 /* ── BUTTONS ── */
-.btn{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.1em;padding:11px 22px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;border-radius:3px;transition:all .18s;text-transform:uppercase;touch-action:manipulation;}
-.btn:hover,.btn:active{background:rgba(201,168,76,.15);}
-.btn:disabled{opacity:.3;cursor:not-allowed;}
-.btn.primary{background:rgba(201,168,76,.16);}
-.btn.danger{border-color:var(--red);color:#f0a0a0;}
-.btn.danger:active{background:rgba(192,57,43,.15);}
-.btn.big{font-size:.85rem;padding:13px 28px;width:100%;max-width:300px;}
+.btn{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.12em;padding:11px 22px;
+  border:1px solid var(--border2);background:rgba(255,255,255,.03);color:var(--gold);
+  cursor:pointer;border-radius:3px;transition:all .2s;text-transform:uppercase;touch-action:manipulation;
+  position:relative;overflow:hidden;}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(212,168,67,.08),transparent);opacity:0;transition:opacity .2s;}
+.btn:hover::after,.btn:active::after{opacity:1;}
+.btn:hover,.btn:active{border-color:var(--gold);color:var(--gold2);}
+.btn:disabled{opacity:.25;cursor:not-allowed;}
+.btn.primary{background:rgba(212,168,67,.12);border-color:var(--gold);}
+.btn.primary:hover{background:rgba(212,168,67,.22);}
+.btn.danger{border-color:rgba(224,53,53,.5);color:var(--red2);}
+.btn.danger:active{background:rgba(224,53,53,.12);}
+.btn.big{font-size:.88rem;padding:14px 32px;width:100%;max-width:320px;}
 
 /* ── PANEL ── */
 .panel{background:var(--bg2);border:1px solid var(--border);border-radius:4px;overflow:hidden;width:100%;}
-.panel-title{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);padding:7px 12px;border-bottom:1px solid var(--border);background:var(--bg3);}
+.panel-title{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text2);padding:7px 12px;border-bottom:1px solid var(--border);background:var(--bg3);}
 
-/* ══════════════════════════════════
-   SCREEN 1 — HOME
-══════════════════════════════════ */
-#screen-home{gap:16px;justify-content:center;}
-.home-logo{font-size:48px;margin-bottom:4px;}
-.home-tagline{font-style:italic;color:var(--text2);font-size:.9rem;margin-bottom:8px;text-align:center;}
+/* ══ HOME ══ */
+#screen-home{gap:0;justify-content:center;}
+.home-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.home-bg svg{width:100%;height:100%;opacity:.12;}
+.home-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:20px;padding:20px;}
+.home-emblem{font-size:72px;filter:drop-shadow(0 0 20px rgba(212,168,67,.6));animation:floatY 4s ease-in-out infinite;}
+@keyframes floatY{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.home-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,8vw,3.2rem);color:var(--gold2);
+  text-shadow:0 0 40px rgba(212,168,67,.6),0 2px 0 rgba(0,0,0,.8);text-align:center;line-height:1.2;}
+.home-subtitle{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.3em;color:var(--text2);
+  text-transform:uppercase;margin-top:-10px;}
+.home-divider{width:180px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:4px 0;}
+.home-tagline{font-style:italic;color:var(--text2);font-size:.95rem;text-align:center;line-height:1.6;max-width:280px;}
 .home-actions{display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;}
+.home-corner{position:absolute;font-size:11px;font-family:'Cinzel',serif;color:var(--text3);letter-spacing:.15em;}
+.home-corner.tl{top:16px;left:16px;}
+.home-corner.tr{top:16px;right:16px;}
+.home-corner.bl{bottom:16px;left:16px;}
+.home-corner.br{bottom:16px;right:16px;}
 
-/* ══════════════════════════════════
-   SCREEN 2 — FIREBASE CONFIG
-══════════════════════════════════ */
+/* ══ CONFIG ══ */
 #screen-config{gap:14px;}
 .config-box{width:100%;max-width:520px;}
 .config-intro{font-size:.85rem;color:var(--text2);font-style:italic;line-height:1.6;margin-bottom:8px;text-align:center;}
 .config-steps{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:14px 16px;font-size:.8rem;line-height:1.8;color:var(--text2);margin-bottom:12px;}
 .config-steps ol{padding-left:18px;}
 .config-steps li{margin-bottom:4px;}
-.config-steps code{font-family:monospace;background:rgba(201,168,76,.1);color:var(--gold2);padding:1px 5px;border-radius:2px;font-size:.76rem;}
+.config-steps code{font-family:monospace;background:rgba(212,168,67,.1);color:var(--gold2);padding:1px 5px;border-radius:2px;font-size:.76rem;}
 .field-group{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
-.field-group label{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);}
+.field-group label{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);}
 .field-group input{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:9px 12px;color:var(--text);font-family:'EB Garamond',serif;font-size:.9rem;outline:none;width:100%;transition:border-color .15s;}
 .field-group input:focus{border-color:var(--gold);}
-#config-error{color:#f0a0a0;font-size:.78rem;text-align:center;min-height:18px;}
+#config-error{color:var(--red2);font-size:.78rem;text-align:center;min-height:18px;}
 
-/* ══════════════════════════════════
-   SCREEN 3 — MATCHMAKING
-══════════════════════════════════ */
+/* ══ MATCHMAKING ══ */
 #screen-match{gap:18px;justify-content:center;}
 .match-status{text-align:center;}
-.match-spinner{font-size:36px;animation:spin 2s linear infinite;display:block;margin:0 auto 12px;}
+.match-orb{width:80px;height:80px;border-radius:50%;margin:0 auto 16px;
+  border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+  box-shadow:0 0 30px rgba(212,168,67,.3),inset 0 0 20px rgba(212,168,67,.1);
+  animation:orbPulse 2s ease-in-out infinite;}
+@keyframes orbPulse{0%,100%{box-shadow:0 0 20px rgba(212,168,67,.2),inset 0 0 10px rgba(212,168,67,.05);}
+  50%{box-shadow:0 0 40px rgba(212,168,67,.5),inset 0 0 25px rgba(212,168,67,.2);}}
+.match-spinner-inner{animation:spin 3s linear infinite;display:block;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.match-info{font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold2);margin-bottom:6px;}
+.match-info{font-family:'Cinzel',serif;font-size:.95rem;color:var(--gold2);margin-bottom:6px;}
 .match-sub{font-size:.82rem;color:var(--text2);font-style:italic;}
-.match-code{font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--gold);letter-spacing:.1em;margin:10px 0;}
+.match-code{font-family:'Cinzel Decorative',serif;font-size:1.6rem;color:var(--gold);letter-spacing:.15em;margin:12px 0;
+  text-shadow:0 0 20px rgba(212,168,67,.4);}
 #match-players{font-size:.78rem;color:var(--text2);margin-top:8px;}
 
-/* ══════════════════════════════════
-   SCREEN 4 — FACTION SELECT
-══════════════════════════════════ */
-#screen-faction{gap:12px;padding:16px 12px 60px;}
-.faction-grid{display:flex;flex-direction:column;gap:10px;width:100%;max-width:480px;}
-.faction-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;overflow:hidden;cursor:pointer;transition:border-color .2s,box-shadow .2s;touch-action:manipulation;}
-.faction-card:active,.faction-card.picked{border-color:var(--gold2);box-shadow:0 0 16px rgba(232,201,109,.3);}
-.fc-header{padding:12px 14px 8px;display:flex;align-items:center;gap:10px;}
-.fc-emblem{font-size:26px;flex:0 0 auto;}
+/* ══ FACTION SELECT ══ */
+#screen-faction{gap:12px;padding:16px 12px 70px;}
+.faction-grid{display:flex;flex-direction:column;gap:10px;width:100%;max-width:500px;}
+.faction-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;
+  cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;touch-action:manipulation;}
+.faction-card:active{transform:scale(.98);}
+.faction-card.picked{border-color:var(--gold);box-shadow:0 0 20px rgba(212,168,67,.25),inset 0 0 30px rgba(212,168,67,.04);}
+.fc-header{padding:14px 16px 10px;display:flex;align-items:center;gap:12px;position:relative;}
+.fc-emblem{font-size:32px;flex:0 0 auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));}
 .fc-text{flex:1;}
-.fc-name{font-family:'Cinzel Decorative',serif;font-size:.82rem;margin-bottom:2px;}
-.fc-lore{font-size:.68rem;color:var(--text2);font-style:italic;line-height:1.3;}
-.fc-warriors{display:flex;flex-wrap:wrap;gap:4px;padding:8px 14px 10px;border-top:1px solid var(--border);}
-.fc-w{display:flex;align-items:center;gap:3px;font-size:.63rem;color:var(--text2);}
-.fc-w span{font-size:12px;}
-.faction-confirm{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:10px 16px;display:flex;gap:10px;align-items:center;z-index:60;}
-.faction-confirm .selected-name{font-family:'Cinzel',serif;font-size:.78rem;color:var(--gold2);flex:1;}
-#faction-waiting{text-align:center;font-style:italic;color:var(--text2);font-size:.82rem;padding:10px;}
+.fc-name{font-family:'Cinzel Decorative',serif;font-size:.85rem;margin-bottom:3px;}
+.fc-lore{font-size:.7rem;color:var(--text2);font-style:italic;line-height:1.4;}
+.fc-accent{position:absolute;top:0;left:0;right:0;height:2px;}
+.fc-warriors{display:flex;flex-wrap:wrap;gap:5px;padding:8px 16px 12px;border-top:1px solid var(--border);}
+.fc-w{display:flex;align-items:center;gap:3px;font-size:.62rem;color:var(--text2);
+  background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:3px;padding:2px 5px;}
+.fc-w-icon{font-size:11px;}
+.fc-w-stats{display:flex;gap:3px;margin-left:2px;}
+.faction-confirm{position:fixed;bottom:0;left:0;right:0;background:rgba(5,4,10,.95);
+  border-top:1px solid var(--border2);padding:12px 16px;display:flex;gap:10px;align-items:center;z-index:60;
+  backdrop-filter:blur(10px);}
+.faction-confirm .selected-name{font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold2);flex:1;}
+#faction-waiting{text-align:center;padding:20px;}
 
-/* ══════════════════════════════════
-   SCREEN 5 — PLACEMENT
-══════════════════════════════════ */
+/* ══ PLACEMENT / BATTLE GRID ══ */
 #screen-place{padding:10px 8px 0;gap:8px;overflow:hidden;}
 .place-top{width:100%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
-.faction-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;border:1px solid;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.08em;}
+.faction-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;border:1px solid;
+  font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.08em;}
 .phase-hint{font-size:.75rem;color:var(--text2);font-style:italic;text-align:center;width:100%;}
 
-/* GRID — responsive */
 .grid-wrap{overflow:auto;-webkit-overflow-scrolling:touch;max-width:100%;flex-shrink:0;}
 .grid{display:grid;grid-template-columns:20px repeat(12,var(--cell));grid-template-rows:20px repeat(12,var(--cell));gap:2px;touch-action:pan-x pan-y;}
-.gh{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.65rem;color:var(--text2);}
-.cell{background:var(--bg3);border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:default;transition:background .1s,border-color .1s;user-select:none;position:relative;}
+.gh{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.62rem;color:var(--text3);}
+.cell{background:var(--bg3);border:1px solid var(--border);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;cursor:default;
+  transition:background .1s,border-color .1s;user-select:none;position:relative;}
 .cell.clickable{cursor:pointer;}
-.cell.clickable:active{border-color:var(--gold);background:#1e1a12;}
+.cell.clickable:active{border-color:var(--gold);background:rgba(212,168,67,.08);}
 .cell.own-unit{cursor:pointer;}
-.cell.own-unit:active{border-color:var(--gold2);}
-.cell.sel{border-color:var(--gold2)!important;box-shadow:0 0 8px rgba(232,201,109,.7);animation:pulseG 1.3s infinite;}
+.cell.sel{border-color:var(--gold2)!important;background:rgba(212,168,67,.12)!important;animation:pulseG 1.2s infinite;}
 .cell.target{cursor:crosshair;animation:pulseT 1s infinite;}
 .cell.target:active{border-color:var(--orange);}
-.cell.hit{background:rgba(192,57,43,.3);border-color:var(--red);}
-.cell.miss{background:rgba(20,30,44,.9);border-color:#101820;}
-.cell.fog{background:#0d0b08;}
-@keyframes pulseG{0%,100%{box-shadow:0 0 6px rgba(232,201,109,.5);}50%{box-shadow:0 0 16px rgba(232,201,109,1);}}
-@keyframes pulseT{0%,100%{border-color:var(--orange);background:rgba(230,126,34,.06);}50%{border-color:#f39c12;background:rgba(230,126,34,.22);}}
-@keyframes flashH{0%{transform:scale(1.3);background:rgba(255,30,30,.7);}100%{transform:scale(1);}}
-.flash-hit{animation:flashH .3s ease;}
-.cell-icon{font-size:18px;line-height:1;pointer-events:none;}
+.cell.hit{background:rgba(224,53,53,.25)!important;border-color:var(--red)!important;}
+.cell.miss{background:rgba(10,8,20,.9);border-color:rgba(42,38,64,.3);}
+.cell.fog{background:#070611;}
+@keyframes pulseG{
+  0%,100%{box-shadow:0 0 6px rgba(212,168,67,.4),inset 0 0 6px rgba(212,168,67,.1);}
+  50%{box-shadow:0 0 18px rgba(212,168,67,.9),inset 0 0 12px rgba(212,168,67,.25);}}
+@keyframes pulseT{
+  0%,100%{border-color:rgba(230,126,34,.6);background:rgba(230,126,34,.05);}
+  50%{border-color:var(--orange2);background:rgba(230,126,34,.18);}}
+.cell-icon{font-size:20px;line-height:1;pointer-events:none;}
 
-/* WARRIOR LIST — horizontal scroll on place screen */
+/* ══ WARRIOR CHIPS ══ */
 .warrior-scroll{display:flex;gap:6px;overflow-x:auto;padding:4px 0 6px;-webkit-overflow-scrolling:touch;width:100%;flex-shrink:0;}
 .warrior-scroll::-webkit-scrollbar{height:3px;}
-.warrior-scroll::-webkit-scrollbar-thumb{background:var(--border);}
-.wchip{flex:0 0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;cursor:pointer;transition:border-color .15s;text-align:center;min-width:68px;touch-action:manipulation;}
-.wchip:active,.wchip.sel-chip{border-color:var(--gold2);background:rgba(232,201,109,.1);}
-.wchip.used{opacity:.3;pointer-events:none;}
-.wchip-icon{font-size:22px;display:block;margin-bottom:2px;}
-.wchip-name{font-family:'Cinzel',serif;font-size:.56rem;color:var(--gold2);display:block;white-space:nowrap;}
-.wchip-stats{font-size:.55rem;color:var(--text2);display:block;margin-top:1px;}
-.wchip-check{font-size:.55rem;color:var(--green);display:block;}
+.warrior-scroll::-webkit-scrollbar-thumb{background:var(--border2);}
+.wchip{flex:0 0 auto;background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  padding:8px 10px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center;
+  min-width:72px;touch-action:manipulation;}
+.wchip:active,.wchip.sel-chip{border-color:var(--gold);background:rgba(212,168,67,.1);}
+.wchip.sel-chip{box-shadow:0 0 12px rgba(212,168,67,.3);}
+.wchip.used{opacity:.25;pointer-events:none;}
+.wchip-icon{font-size:24px;display:block;margin-bottom:3px;}
+.wchip-name{font-family:'Cinzel',serif;font-size:.55rem;color:var(--gold2);display:block;white-space:nowrap;}
+.wchip-stats{font-size:.54rem;color:var(--text2);display:block;margin-top:2px;}
+.wchip-check{font-size:.6rem;color:var(--green);display:block;}
 
 .place-actions{display:flex;gap:8px;width:100%;flex-shrink:0;padding-bottom:8px;}
 
-/* ══════════════════════════════════
-   SCREEN 6 — BATTLE
-══════════════════════════════════ */
+/* ══ BATTLE SCREEN ══ */
 #screen-battle{padding:8px 8px 0;gap:6px;overflow:hidden;}
 .battle-top{width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;}
-.turn-pill{font-family:'Cinzel',serif;font-size:.7rem;padding:4px 12px;border-radius:20px;border:1px solid var(--gold);color:var(--gold);}
+.turn-pill{font-family:'Cinzel',serif;font-size:.7rem;padding:5px 14px;border-radius:20px;
+  border:1px solid var(--gold);color:var(--gold);transition:all .3s;}
+.turn-pill.my-turn{border-color:var(--gold2);color:var(--gold2);
+  box-shadow:0 0 12px rgba(212,168,67,.3);animation:turnGlow 2s infinite;}
+@keyframes turnGlow{0%,100%{box-shadow:0 0 8px rgba(212,168,67,.2);}50%{box-shadow:0 0 18px rgba(212,168,67,.5);}}
 .vs-bar{display:flex;gap:6px;align-items:center;width:100%;justify-content:space-between;}
-.vs-side{display:flex;align-items:center;gap:4px;font-size:.72rem;}
-.vs-alive{font-family:'Cinzel',serif;font-size:.8rem;}
-.boards-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden;width:100%;flex-shrink:0;}
-.board-tab{flex:1;padding:7px 4px;text-align:center;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.08em;cursor:pointer;background:var(--bg3);color:var(--text2);border:none;transition:background .15s;touch-action:manipulation;}
-.board-tab.active{background:rgba(201,168,76,.15);color:var(--gold2);}
+.vs-side{display:flex;align-items:center;gap:5px;}
+.vs-alive{font-family:'Cinzel',serif;font-size:.9rem;font-weight:600;}
+.vs-label{font-size:.62rem;color:var(--text2);}
+
+.boards-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:5px;overflow:hidden;width:100%;flex-shrink:0;}
+.board-tab{flex:1;padding:8px 4px;text-align:center;font-family:'Cinzel',serif;font-size:.62rem;
+  letter-spacing:.1em;cursor:pointer;background:var(--bg3);color:var(--text2);border:none;transition:all .2s;touch-action:manipulation;}
+.board-tab.active{background:rgba(212,168,67,.12);color:var(--gold2);border-bottom:2px solid var(--gold);}
 .board-container{width:100%;overflow:auto;flex-shrink:0;-webkit-overflow-scrolling:touch;}
 .warrior-scroll-battle{display:flex;gap:5px;overflow-x:auto;padding:3px 0 5px;-webkit-overflow-scrolling:touch;width:100%;flex-shrink:0;}
 .warrior-scroll-battle::-webkit-scrollbar{height:3px;}
-.warrior-scroll-battle::-webkit-scrollbar-thumb{background:var(--border);}
+.warrior-scroll-battle::-webkit-scrollbar-thumb{background:var(--border2);}
 
-/* LOG */
-.log-mini{flex:1;overflow-y:auto;font-size:.72rem;display:flex;flex-direction:column;gap:3px;padding:4px 0;min-height:50px;}
+/* ══ LOG ══ */
+.log-mini{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;padding:4px 0;min-height:50px;}
 .log-mini::-webkit-scrollbar{width:3px;}
-.log-mini::-webkit-scrollbar-thumb{background:var(--border);}
-.le{border-left:2px solid var(--border);padding-left:5px;line-height:1.4;color:var(--text2);}
-.le.combat{color:var(--text);border-left-color:var(--orange);}
-.le.win{color:#80e898;border-left-color:var(--green);}
-.le.lose{color:#f0a0a0;border-left-color:var(--red);}
-.le.both{color:#c8a8e8;border-left-color:#9b59b6;}
-.le.killed{color:#ff4444;border-left-color:#cc0000;font-weight:500;}
-.le.defended{color:#80e898;border-left-color:var(--green);}
-.le.sys{color:var(--text2);border-left-color:#3a2e1e;font-style:italic;}
+.log-mini::-webkit-scrollbar-thumb{background:var(--border2);}
+.le{padding:4px 8px 4px 10px;line-height:1.4;font-size:.72rem;border-radius:3px;border-left:3px solid var(--border2);color:var(--text2);}
+.le.win{color:var(--green2);border-left-color:var(--green);background:rgba(46,204,113,.06);}
+.le.lose{color:#ffaaaa;border-left-color:var(--red);background:rgba(224,53,53,.06);}
+.le.both{color:#d4aaff;border-left-color:var(--purple);background:rgba(155,89,182,.06);}
+.le.killed{color:var(--red2);border-left-color:#cc0000;background:rgba(224,53,53,.1);font-weight:600;}
+.le.defended{color:var(--green2);border-left-color:var(--green);background:rgba(46,204,113,.06);}
+.le.sys{color:var(--text3);border-left-color:var(--border);font-style:italic;}
 
-/* WAITING OVERLAY */
-#waiting-overlay{display:none;position:fixed;inset:0;background:rgba(10,8,6,.88);z-index:80;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:20px;}
+/* ══ WAITING OVERLAY ══ */
+#waiting-overlay{display:none;position:fixed;inset:0;background:rgba(5,4,10,.92);
+  z-index:80;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:20px;
+  backdrop-filter:blur(4px);}
 #waiting-overlay.show{display:flex;}
-.wo-spinner{font-size:32px;animation:spin 2s linear infinite;}
-.wo-text{font-family:'Cinzel',serif;color:var(--gold2);font-size:.9rem;}
-.wo-sub{font-size:.78rem;color:var(--text2);font-style:italic;}
+.wo-orb{width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  animation:orbPulse 2s ease-in-out infinite;}
+.wo-spinner-inner{animation:spin 3s linear infinite;display:block;}
+.wo-text{font-family:'Cinzel',serif;color:var(--gold2);font-size:.95rem;}
+.wo-sub{font-size:.8rem;color:var(--text2);font-style:italic;}
 
-/* WIN OVERLAY */
-#win-overlay{display:none;position:fixed;inset:0;background:rgba(5,4,3,.95);z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:20px;}
-#win-overlay.show{display:flex;}
-#win-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.6rem,7vw,2.8rem);color:var(--gold);text-shadow:0 0 40px rgba(201,168,76,.6);}
-#win-sub{font-style:italic;color:var(--text2);}
+/* ══ WIN OVERLAY ══ */
+#win-overlay{display:none;position:fixed;inset:0;background:rgba(3,2,8,.96);
+  z-index:100;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:20px;}
+#win-overlay.show{display:flex;animation:fadeIn .6s ease;}
+@keyframes fadeIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.win-emblem{font-size:64px;animation:floatY 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(212,168,67,.7));}
+#win-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,7vw,3rem);color:var(--gold2);
+  text-shadow:0 0 40px rgba(212,168,67,.7),0 0 80px rgba(212,168,67,.3);}
+#win-sub{font-style:italic;color:var(--text2);font-size:1rem;max-width:300px;}
 
-/* STATS badges */
-.st{font-size:.58rem;padding:1px 4px;border-radius:2px;font-family:'Cinzel',serif;white-space:nowrap;}
-.st.atk{background:rgba(192,57,43,.28);color:#f0a0a0;border:1px solid rgba(192,57,43,.45);}
-.st.def{background:rgba(52,152,219,.22);color:#a0c8f0;border:1px solid rgba(52,152,219,.38);}
+/* ══ STATS BADGES ══ */
+.st{font-size:.56rem;padding:2px 5px;border-radius:3px;font-family:'Cinzel',serif;white-space:nowrap;}
+.st.atk{background:rgba(224,53,53,.2);color:#ff9090;border:1px solid rgba(224,53,53,.4);}
+.st.def{background:rgba(74,128,217,.2);color:#a0c8ff;border:1px solid rgba(74,128,217,.4);}
 
 @media(min-width:480px){:root{--cell:42px;}}
-@media(min-width:640px){:root{--cell:47px;}.cell-icon{font-size:20px;}}
+@media(min-width:640px){:root{--cell:47px;}.cell-icon{font-size:22px;}}
 </style>
 </head>
 <body>
 
 <!-- ══ SCREEN: HOME ══ -->
 <div id="screen-home" class="screen active">
-  <div class="home-logo">⚔</div>
-  <div class="screen-header">
-    <h1>Warrior Grid</h1>
-    <div class="screen-sub">Batalla de Facciones Online</div>
+  <div class="home-bg">
+    <svg viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="rg1" cx="30%" cy="20%"><stop offset="0%" stop-color="#6040c0" stop-opacity=".15"/><stop offset="100%" stop-color="#6040c0" stop-opacity="0"/></radialGradient>
+        <radialGradient id="rg2" cx="70%" cy="80%"><stop offset="0%" stop-color="#c04080" stop-opacity=".12"/><stop offset="100%" stop-color="#c04080" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="400" height="700" fill="url(#rg1)"/><rect width="400" height="700" fill="url(#rg2)"/>
+      <line x1="200" y1="0" x2="200" y2="700" stroke="#d4a843" stroke-opacity=".06" stroke-width="1"/>
+      <line x1="0" y1="350" x2="400" y2="350" stroke="#d4a843" stroke-opacity=".06" stroke-width="1"/>
+      <polygon points="200,60 220,100 200,90 180,100" fill="#d4a843" fill-opacity=".08"/>
+      <polygon points="200,640 220,600 200,610 180,600" fill="#d4a843" fill-opacity=".08"/>
+      <rect x="30" y="30" width="340" height="640" rx="2" fill="none" stroke="#d4a843" stroke-opacity=".07" stroke-width="1"/>
+      <rect x="50" y="50" width="300" height="600" rx="2" fill="none" stroke="#d4a843" stroke-opacity=".04" stroke-width="1"/>
+    </svg>
   </div>
-  <div class="home-tagline">Elige tu facción. Despliega tu ejército.<br>Destruye al enemigo.</div>
-  <div class="home-actions">
-    <button class="btn primary big" onclick="quickPlay()">⚔ Buscar Partida</button>
-    <button class="btn big" onclick="showRules()">📜 Reglas</button>
-  </div>
-  <div id="rules-box" style="display:none;max-width:360px;margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:14px 16px;font-size:.8rem;line-height:1.7;color:var(--text2);">
-    <strong style="color:var(--gold2);font-family:'Cinzel',serif;font-size:.75rem;">REGLAS</strong><br><br>
-    • Elige tu facción (5 disponibles, 8 guerreros cada una).<br>
-    • Coloca tus 8 guerreros — <strong>1 guerrero = 1 celda</strong>.<br>
-    • Por turno: elige un guerrero tuyo y ataca una coordenada enemiga.<br>
-    • <strong>ATK &gt; DEF</strong> → el defensor muere instantáneamente.<br>
-    • <strong>ATK = DEF</strong> → ambos mueren.<br>
-    • <strong>ATK &lt; DEF</strong> → el defensor resiste, turno perdido.<br>
-    • Si atacas una celda vacía, se marca y turno perdido.<br>
-    • Gana quien elimine todos los guerreros rivales.
+  <div class="home-corner tl">✦ ISEKAI</div>
+  <div class="home-corner tr">TACTICAL ✦</div>
+  <div class="home-corner bl">v1.0</div>
+  <div class="home-corner br">⚔ 5 FACCIONES</div>
+  <div class="home-content">
+    <div class="home-emblem">⚔</div>
+    <div class="home-title">Isekai<br>Tactical</div>
+    <div class="home-subtitle">Batalla de Facciones Online</div>
+    <div class="home-divider"></div>
+    <div class="home-tagline">Elige tu facción. Despliega tu ejército.<br>Destruye al enemigo.</div>
+    <div class="home-actions" style="margin-top:8px;">
+      <button class="btn primary big" onclick="quickPlay()">⚔ Buscar Partida</button>
+      <button class="btn big" onclick="showRules()">📜 Reglas</button>
+    </div>
+    <div id="rules-box" style="display:none;max-width:360px;margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 18px;font-size:.82rem;line-height:1.8;color:var(--text2);">
+      <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold2);letter-spacing:.15em;margin-bottom:10px;">— REGLAS DE COMBATE —</div>
+      • Elige tu facción (5 disponibles, 8 guerreros cada una).<br>
+      • Coloca tus 8 guerreros — <strong style="color:var(--text)">1 guerrero = 1 celda</strong>.<br>
+      • Por turno: elige un guerrero y ataca una coordenada enemiga.<br>
+      • <strong style="color:var(--red2)">ATK &gt; DEF</strong> → el defensor muere al instante.<br>
+      • <strong style="color:var(--purple)">ATK = DEF</strong> → ambos mueren.<br>
+      • <strong style="color:var(--blue)">ATK &lt; DEF</strong> → el defensor resiste, turno perdido.<br>
+      • Celda vacía → turno perdido.<br>
+      • Gana quien elimine todos los guerreros rivales.
+    </div>
   </div>
 </div>
 
@@ -248,7 +327,7 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 <div id="screen-match" class="screen">
   <div class="screen-header"><h1>⚔ Warrior Grid</h1></div>
   <div class="match-status">
-    <span class="match-spinner" id="match-spinner">🔍</span>
+    <div class="match-orb"><span class="match-spinner-inner" id="match-spinner">🔍</span></div>
     <div class="match-info" id="match-info">Buscando partida...</div>
     <div class="match-sub" id="match-sub">Esperando a otro jugador</div>
     <div class="match-code" id="match-code"></div>
@@ -314,16 +393,17 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 
 <!-- WAITING OVERLAY -->
 <div id="waiting-overlay">
-  <div class="wo-spinner">⏳</div>
+  <div class="wo-orb"><span class="wo-spinner-inner">⏳</span></div>
   <div class="wo-text" id="wo-text">Esperando al rival...</div>
   <div class="wo-sub" id="wo-sub"></div>
 </div>
 
 <!-- WIN OVERLAY -->
 <div id="win-overlay">
+  <div class="win-emblem" id="win-emblem">🏆</div>
   <div id="win-title"></div>
   <div id="win-sub"></div>
-  <button class="btn primary" style="margin-top:10px" onclick="location.reload()">Nueva Partida</button>
+  <button class="btn primary" style="margin-top:16px;min-width:200px" onclick="location.reload()">⚔ Nueva Partida</button>
 </div>
 
 <script type="module">
@@ -354,62 +434,62 @@ async function loadFirebase(config) {
 const FACTIONS = [
   { id:'iron', name:'Reino de Hierro', emblem:'🏰', color:'#4a90d9', lore:'Disciplina y acero humano.',
     warriors:[
-      {id:'knight',    name:'Caballero',  race:'Humano', icon:'🛡', atk:6, def:8, desc:'Tanque. Resiste casi todo.'},
-      {id:'paladin',   name:'Paladín',    race:'Humano', icon:'✝', atk:7, def:7, desc:'Equilibrio perfecto.'},
-      {id:'archer_h',  name:'Arquero',    race:'Humano', icon:'🏹', atk:8, def:4, desc:'Gran ATK, vulnerable.'},
-      {id:'mage',      name:'Mago',       race:'Humano', icon:'🔮', atk:9, def:3, desc:'Poder devastador, sin armadura.'},
-      {id:'scout',     name:'Explorador', race:'Humano', icon:'🗡', atk:5, def:5, desc:'Equilibrado y fiable.'},
-      {id:'cleric',    name:'Clérigo',    race:'Humano', icon:'📿', atk:4, def:6, desc:'Defensa sólida.'},
-      {id:'crossbow',  name:'Ballestero', race:'Humano', icon:'🎯', atk:8, def:3, desc:'Alto daño, muy frágil.'},
-      {id:'alchemist', name:'Alquimista', race:'Humano', icon:'⚗', atk:7, def:5, desc:'Versátil. Amenaza moderada.'},
+      {id:'iron_1', name:'Paladín',    race:'Humano', icon:'✝',  atk:10, def:2, desc:'Poder divino sin límites.'},
+      {id:'iron_2', name:'Arquero',    race:'Humano', icon:'🏹', atk:9,  def:3, desc:'Precisión mortal, sin armadura.'},
+      {id:'iron_3', name:'Ballestero', race:'Humano', icon:'🎯', atk:8,  def:5, desc:'Buen daño con algo de protección.'},
+      {id:'iron_4', name:'Paladín',    race:'Humano', icon:'⚜',  atk:7,  def:7, desc:'Equilibrio perfecto.'},
+      {id:'iron_5', name:'Caballero',  race:'Humano', icon:'🛡', atk:6,  def:8, desc:'Tanque. Difícil de derribar.'},
+      {id:'iron_6', name:'Guardián',   race:'Humano', icon:'🗼', atk:5,  def:9, desc:'Muro de acero.'},
+      {id:'iron_7', name:'Clérigo',    race:'Humano', icon:'📿', atk:4,  def:6, desc:'Soporte y protección.'},
+      {id:'iron_8', name:'Explorador', race:'Humano', icon:'🗡', atk:7,  def:4, desc:'Ágil y oportunista.'},
     ]
   },
   { id:'forest', name:'Bosque Eterno', emblem:'🌿', color:'#27ae60', lore:'Velocidad y magia natural élfica.',
     warriors:[
-      {id:'elf_archer',  name:'Arquero',       race:'Elfo', icon:'🏹', atk:9, def:4, desc:'Precisión letal.'},
-      {id:'druid',       name:'Druida',         race:'Elfo', icon:'🍃', atk:5, def:7, desc:'Defensa natural.'},
-      {id:'ranger',      name:'Guardabosques',  race:'Elfo', icon:'🦌', atk:7, def:6, desc:'Equilibrado y ágil.'},
-      {id:'illusionist', name:'Ilusionista',    race:'Elfo', icon:'✨', atk:8, def:4, desc:'Alta ofensiva.'},
-      {id:'hound',       name:'Sabueso',        race:'Elfo', icon:'🐺', atk:6, def:5, desc:'Cazador fiable.'},
-      {id:'sentinel',    name:'Centinela',      race:'Elfo', icon:'🌲', atk:4, def:9, desc:'Solo ATK 10 lo derriba.'},
-      {id:'shaman_e',    name:'Chamán',         race:'Elfo', icon:'🌙', atk:7, def:5, desc:'Magia oscura élfica.'},
-      {id:'dancer',      name:'Danzarín',       race:'Elfo', icon:'🌸', atk:10,def:2, desc:'Todo o nada.'},
+      {id:'forest_1', name:'Danzarín',       race:'Elfo', icon:'🌸', atk:10, def:2, desc:'Todo o nada.'},
+      {id:'forest_2', name:'Arquero Élfico', race:'Elfo', icon:'🏹', atk:9,  def:3, desc:'Precisión letal.'},
+      {id:'forest_3', name:'Ilusionista',    race:'Elfo', icon:'✨', atk:8,  def:5, desc:'Magia ofensiva.'},
+      {id:'forest_4', name:'Guardabosques',  race:'Elfo', icon:'🦌', atk:7,  def:7, desc:'Equilibrado y ágil.'},
+      {id:'forest_5', name:'Chamán',         race:'Elfo', icon:'🌙', atk:6,  def:8, desc:'Magia de protección.'},
+      {id:'forest_6', name:'Centinela',      race:'Elfo', icon:'🌲', atk:5,  def:9, desc:'Solo ATK 10 lo derriba.'},
+      {id:'forest_7', name:'Druida',         race:'Elfo', icon:'🍃', atk:4,  def:6, desc:'Guardián de la naturaleza.'},
+      {id:'forest_8', name:'Sabueso',        race:'Elfo', icon:'🐺', atk:7,  def:4, desc:'Cazador veloz.'},
     ]
   },
   { id:'horde', name:'Horda Salvaje', emblem:'💀', color:'#e74c3c', lore:'Orcos. Fuerza bruta sin límites.',
     warriors:[
-      {id:'berserker',  name:'Berserker',   race:'Orco', icon:'⚔', atk:10,def:3, desc:'ATK máximo. Muere ante cualquier golpe.'},
-      {id:'shaman_o',   name:'Chamán Orco', race:'Orco', icon:'🔥', atk:6, def:6, desc:'El más equilibrado de la horda.'},
-      {id:'rider',      name:'Jinete',      race:'Orco', icon:'🐗', atk:8, def:5, desc:'Rápido y letal.'},
-      {id:'demolisher', name:'Demoledor',   race:'Orco', icon:'🪨', atk:7, def:7, desc:'Muro y espada a la vez.'},
-      {id:'hunter_o',   name:'Cazador',     race:'Orco', icon:'🗡', atk:9, def:4, desc:'Ataque fuerte, expuesto.'},
-      {id:'ogre',       name:'Ogro',        race:'Orco', icon:'👹', atk:5, def:9, desc:'Solo ATK 10 lo derriba.'},
-      {id:'brute',      name:'Bruto',       race:'Orco', icon:'🦴', atk:8, def:4, desc:'Destructivo y descuidado.'},
-      {id:'incendiary', name:'Incendiario', race:'Orco', icon:'💣', atk:9, def:3, desc:'Máximo daño, mínima defensa.'},
+      {id:'horde_1', name:'Berserker',   race:'Orco', icon:'⚔',  atk:10, def:2, desc:'ATK máximo. Cae ante cualquier golpe.'},
+      {id:'horde_2', name:'Cazador',     race:'Orco', icon:'🗡', atk:9,  def:3, desc:'Ataque fuerte, muy expuesto.'},
+      {id:'horde_3', name:'Jinete',      race:'Orco', icon:'🐗', atk:8,  def:5, desc:'Rápido y letal.'},
+      {id:'horde_4', name:'Chamán Orco', race:'Orco', icon:'🔥', atk:7,  def:7, desc:'Equilibrio brutal.'},
+      {id:'horde_5', name:'Demoledor',   race:'Orco', icon:'🪨', atk:6,  def:8, desc:'Muro viviente.'},
+      {id:'horde_6', name:'Ogro',        race:'Orco', icon:'👹', atk:5,  def:9, desc:'Solo ATK 10 lo derriba.'},
+      {id:'horde_7', name:'Incendiario', race:'Orco', icon:'💣', atk:4,  def:6, desc:'Explosivo de apoyo.'},
+      {id:'horde_8', name:'Bruto',       race:'Orco', icon:'🦴', atk:7,  def:4, desc:'Destructivo y descuidado.'},
     ]
   },
   { id:'undead', name:'Legión Oscura', emblem:'☠', color:'#9b59b6', lore:'Los muertos no sienten dolor.',
     warriors:[
-      {id:'necromancer',name:'Nigromante', race:'No-Muerto', icon:'💀', atk:7, def:5, desc:'Equilibrado y temible.'},
-      {id:'specter',    name:'Espectro',   race:'No-Muerto', icon:'👻', atk:8, def:4, desc:'Ataque alto, vulnerable.'},
-      {id:'lich',       name:'Liche',      race:'No-Muerto', icon:'🦇', atk:9, def:4, desc:'Poder arcano. Muy ofensivo.'},
-      {id:'vampire',    name:'Vampiro',    race:'No-Muerto', icon:'🧛', atk:8, def:6, desc:'Equilibrado y elegante.'},
-      {id:'banshee',    name:'Banshee',    race:'No-Muerto', icon:'💨', atk:10,def:2, desc:'Grito letal. ATK máximo.'},
-      {id:'skeleton',   name:'Esqueleto',  race:'No-Muerto', icon:'🦷', atk:4, def:7, desc:'Defensa sólida.'},
-      {id:'revenant',   name:'Revenant',   race:'No-Muerto', icon:'⚰', atk:6, def:8, desc:'Casi indestructible.'},
-      {id:'shade',      name:'Sombra',     race:'No-Muerto', icon:'🌑', atk:7, def:6, desc:'Impredecible.'},
+      {id:'undead_1', name:'Banshee',     race:'No-Muerto', icon:'💨', atk:10, def:2, desc:'Grito letal. ATK máximo.'},
+      {id:'undead_2', name:'Liche',       race:'No-Muerto', icon:'🦇', atk:9,  def:3, desc:'Poder arcano máximo.'},
+      {id:'undead_3', name:'Espectro',    race:'No-Muerto', icon:'👻', atk:8,  def:5, desc:'Ataque alto, algo de resistencia.'},
+      {id:'undead_4', name:'Vampiro',     race:'No-Muerto', icon:'🧛', atk:7,  def:7, desc:'Elegante y equilibrado.'},
+      {id:'undead_5', name:'Revenant',    race:'No-Muerto', icon:'⚰', atk:6,  def:8, desc:'Casi indestructible.'},
+      {id:'undead_6', name:'Esqueleto',   race:'No-Muerto', icon:'🦷', atk:5,  def:9, desc:'Defensa máxima.'},
+      {id:'undead_7', name:'Nigromante',  race:'No-Muerto', icon:'💀', atk:4,  def:6, desc:'Maestro de las sombras.'},
+      {id:'undead_8', name:'Sombra',      race:'No-Muerto', icon:'🌑', atk:7,  def:4, desc:'Impredecible y veloz.'},
     ]
   },
   { id:'chaos', name:'Alianza Caótica', emblem:'⚡', color:'#e67e22', lore:'Renegados de todas las razas. Impredecibles.',
     warriors:[
-      {id:'half_dragon',  name:'Semidragón',     race:'Híbrido',   icon:'🐉', atk:10,def:5, desc:'El más poderoso de todos.'},
-      {id:'shadow_elf',   name:'Elfo Oscuro',    race:'Híbrido',   icon:'🌒', atk:8, def:6, desc:'Velocidad y oscuridad.'},
-      {id:'iron_orc',     name:'Orco Acorazado', race:'Híbrido',   icon:'🔩', atk:6, def:9, desc:'Armadura humana sobre músculo orco.'},
-      {id:'lich_knight',  name:'Caballero Liche',race:'Híbrido',   icon:'⚔', atk:8, def:7, desc:'Fuerza con poder de la muerte.'},
-      {id:'chaos_mage',   name:'Mago del Caos',  race:'Humano',    icon:'🔮', atk:9, def:3, desc:'Poder puro, sin armadura.'},
-      {id:'forest_rider', name:'Jinete Élfico',  race:'Elfo',      icon:'🦌', atk:7, def:6, desc:'Arquero montado.'},
-      {id:'warchief',     name:'Jefe de Guerra', race:'Orco',      icon:'👑', atk:8, def:5, desc:'Liderazgo orco.'},
-      {id:'wraith',       name:'Espectro Real',  race:'No-Muerto', icon:'👁', atk:7, def:7, desc:'Equilibrio total.'},
+      {id:'chaos_1', name:'Mago del Caos',    race:'Humano',    icon:'🔮', atk:10, def:2, desc:'Poder puro, sin armadura.'},
+      {id:'chaos_2', name:'Semidragón',        race:'Híbrido',   icon:'🐉', atk:9,  def:3, desc:'Fuerza draconiana.'},
+      {id:'chaos_3', name:'Elfo Oscuro',       race:'Híbrido',   icon:'🌒', atk:8,  def:5, desc:'Velocidad y oscuridad.'},
+      {id:'chaos_4', name:'Caballero Liche',   race:'Híbrido',   icon:'⚔', atk:7,  def:7, desc:'Fuerza con poder de la muerte.'},
+      {id:'chaos_5', name:'Jefe de Guerra',    race:'Orco',      icon:'👑', atk:6,  def:8, desc:'Liderazgo orco blindado.'},
+      {id:'chaos_6', name:'Orco Acorazado',    race:'Híbrido',   icon:'🔩', atk:5,  def:9, desc:'Armadura sobre músculo orco.'},
+      {id:'chaos_7', name:'Espectro Real',     race:'No-Muerto', icon:'👁', atk:4,  def:6, desc:'Apoyo espectral.'},
+      {id:'chaos_8', name:'Jinete Élfico',     race:'Elfo',      icon:'🦌', atk:7,  def:4, desc:'Arquero montado veloz.'},
     ]
   }
 ];
@@ -628,6 +708,7 @@ function renderFactionGrid(){
     const card = document.createElement('div');
     card.className='faction-card'+(G.selFaction===f.id?' picked':'');
     card.innerHTML=`
+      <div class="fc-accent" style="background:linear-gradient(90deg,${f.color},transparent)"></div>
       <div class="fc-header">
         <div class="fc-emblem">${f.emblem}</div>
         <div class="fc-text">
@@ -636,7 +717,7 @@ function renderFactionGrid(){
         </div>
       </div>
       <div class="fc-warriors">${f.warriors.map(w=>`
-        <div class="fc-w"><span>${w.icon}</span>${w.name} <span class="st atk">${w.atk}</span><span class="st def">${w.def}</span></div>
+        <div class="fc-w"><span class="fc-w-icon">${w.icon}</span>${w.name}<span class="fc-w-stats"><span class="st atk">${w.atk}</span><span class="st def">${w.def}</span></span></div>
       `).join('')}</div>`;
     card.onclick=()=>selectFactionCard(f.id);
     grid.appendChild(card);
@@ -854,8 +935,7 @@ function renderBattle(v){
   // Turn pill
   const pill=document.getElementById('battle-turn-pill');
   pill.textContent=isMyTurn?'⚔ Tu turno':'⏳ Turno del rival';
-  pill.style.borderColor=isMyTurn?'var(--gold)':'var(--text2)';
-  pill.style.color=isMyTurn?'var(--gold)':'var(--text2)';
+  pill.className='turn-pill'+(isMyTurn?' my-turn':'');
 
   // VS bar
   const myAlive=myBoardData.length - attacks.filter(a=>a.target===G.playerId&&(a.result==='hit'||a.result==='both')).length
@@ -870,7 +950,7 @@ function renderBattle(v){
   buildGrid('board-mine',(cell,ri,ci)=>{
     const d=myBoardRender[ri][ci];
     if(d.dead){ cell.classList.add('hit'); cell.innerHTML=`<span class="cell-icon">💥</span>`; }
-    else if(d.miss){ cell.classList.add('miss'); cell.innerHTML=`<span class="cell-icon" style="font-size:9px;color:var(--text2)">·</span>`; }
+    else if(d.miss){ cell.classList.add('miss'); cell.innerHTML=`<span style="font-size:10px;color:var(--text3);line-height:1">✕</span>`; }
     else if(d.wid){
       const w=warriorById(G.myFaction,d.wid);
       cell.innerHTML=`<span class="cell-icon">${w.icon}</span>`;
@@ -887,7 +967,7 @@ function renderBattle(v){
   buildGrid('board-enemy',(cell,ri,ci)=>{
     const d=enemyBoardRender[ri][ci];
     if(d.dead){ cell.classList.add('hit'); cell.innerHTML=`<span class="cell-icon">💥</span>`; }
-    else if(d.miss){ cell.classList.add('miss'); cell.innerHTML=`<span class="cell-icon" style="font-size:9px;color:var(--text2)">·</span>`; }
+    else if(d.miss){ cell.classList.add('miss'); cell.innerHTML=`<span style="font-size:10px;color:var(--text3);line-height:1">✕</span>`; }
     else{
       cell.classList.add('fog');
       if(isMyTurn&&G.selUnit){ cell.classList.add('target'); cell.onclick=()=>doAttack(ri,ci,v); }
@@ -1046,6 +1126,7 @@ function handleGameOver(v){
   const won  = v.winner===G.playerId;
   const draw = v.winner==='draw';
   const f=factionById(G.myFaction);
+  document.getElementById('win-emblem').textContent=draw?'⚡':(won?'🏆':'💀');
   document.getElementById('win-title').textContent=draw?'¡Empate épico!':(won?'¡Victoria!':'Derrota');
   document.getElementById('win-sub').textContent=draw?'Ambos ejércitos se aniquilaron.'
     :(won?`${f.emblem} ${f.name} ha dominado el campo de batalla.`:'El rival destruyó tu ejército.');
