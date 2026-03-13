@@ -1124,17 +1124,21 @@ function renderBattle(v){
       // Enemy attacked me
       if(atk.result==='hit'||atk.result==='both'){
         myBoardRender[atk.r][atk.c].dead=true;
-      } else {
+      } else if(atk.result==='empty'){
+        // Solo marcar vacío — no tocar celdas con personajes vivos
         myBoardRender[atk.r][atk.c].miss=true;
       }
+      // result==='miss': el personaje resistió, no se marca nada — sigue vivo y atacable
     }
     if(atk.attacker===G.playerId){
       // I attacked
       if(atk.result==='hit'||atk.result==='both'){
         enemyBoardRender[atk.r][atk.c].dead=true;
-      } else {
+      } else if(atk.result==='empty'){
+        // Solo marcar vacío — no tocar celdas con personajes vivos
         enemyBoardRender[atk.r][atk.c].miss=true;
       }
+      // result==='miss': el personaje resistió, sigue en su celda y se puede volver a atacar
     }
   });
 
@@ -1235,7 +1239,9 @@ async function doAttack(ri,ci,v){
 
   // Check not already attacked
   const attacks=v.attacks?Object.values(v.attacks):[];
-  if(attacks.some(a=>a.attacker===G.playerId&&a.r===ri&&a.c===ci)){
+  // Bloquear si ya atacamos esa celda y el resultado fue hit, both o empty
+  // Si fue miss (personaje vivo que resistió) se puede volver a atacar
+  if(attacks.some(a=>a.attacker===G.playerId&&a.r===ri&&a.c===ci&&(a.result==='hit'||a.result==='both'||a.result==='empty'))){
     return;
   }
 
