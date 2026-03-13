@@ -883,36 +883,54 @@ function renderProfile(){
   const league = getLeague(myProfile.elo);
   const nextLeague = LEAGUES[LEAGUES.indexOf(league)+1];
 
-  // Avatar
-  const avatarEl = document.getElementById('profile-avatar');
-  if(myProfile.photoURL){
-    avatarEl.outerHTML=`<img class="profile-avatar" id="profile-avatar" src="${myProfile.photoURL}" onerror="this.outerHTML='<div class=profile-avatar-placeholder id=profile-avatar>⚔</div>'">`;
+  // Avatar — replace placeholder with img safely
+  const avatarContainer = document.getElementById('profile-avatar');
+  if(myProfile.photoURL && avatarContainer){
+    avatarContainer.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = myProfile.photoURL;
+    img.style.cssText = 'width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);object-fit:cover;';
+    img.onerror = ()=>{ avatarContainer.textContent='⚔'; };
+    avatarContainer.appendChild(img);
   }
 
-  document.getElementById('profile-username').textContent = myProfile.username||'Sin nombre';
-  document.getElementById('profile-email').textContent = myProfile.email||'';
+  const unEl=document.getElementById('profile-username');
+  const emEl=document.getElementById('profile-email');
+  const badge=document.getElementById('profile-league-badge');
+  const eloEl=document.getElementById('stat-elo');
+  const winEl=document.getElementById('stat-wins');
+  const lossEl=document.getElementById('stat-losses');
 
-  const badge = document.getElementById('profile-league-badge');
-  badge.textContent = `${league.emoji} ${league.name}`;
-  badge.style.background=`${league.color}22`;
-  badge.style.color=league.color;
-  badge.style.border=`1px solid ${league.color}55`;
-
-  document.getElementById('stat-elo').textContent = myProfile.elo;
-  document.getElementById('stat-wins').textContent = myProfile.wins||0;
-  document.getElementById('stat-losses').textContent = myProfile.losses||0;
+  if(unEl)   unEl.textContent   = myProfile.username||'Sin nombre';
+  if(emEl)   emEl.textContent   = myProfile.email||'';
+  if(badge){
+    badge.textContent = `${league.emoji} ${league.name}`;
+    badge.style.background=`${league.color}22`;
+    badge.style.color=league.color;
+    badge.style.border=`1px solid ${league.color}55`;
+  }
+  if(eloEl)  eloEl.textContent  = myProfile.elo;
+  if(winEl)  winEl.textContent  = myProfile.wins||0;
+  if(lossEl) lossEl.textContent = myProfile.losses||0;
 
   // ELO bar
   const from = league.min, to = nextLeague ? nextLeague.min : league.max;
   const pct = Math.min(100, Math.round(((myProfile.elo-from)/(to-from))*100));
-  document.getElementById('elo-bar-from').textContent = league.name;
-  document.getElementById('elo-bar-elo').textContent = `${myProfile.elo} ELO`;
-  document.getElementById('elo-bar-to').textContent = nextLeague ? nextLeague.name : '★ MAX';
-  document.getElementById('elo-bar-fill').style.width = pct+'%';
-  document.getElementById('elo-bar-fill').style.background = `linear-gradient(90deg,${league.color},${nextLeague?nextLeague.color:league.color})`;
+  const barFrom=document.getElementById('elo-bar-from');
+  const barElo=document.getElementById('elo-bar-elo');
+  const barTo=document.getElementById('elo-bar-to');
+  const barFill=document.getElementById('elo-bar-fill');
+  if(barFrom) barFrom.textContent = league.name;
+  if(barElo)  barElo.textContent  = `${myProfile.elo} ELO`;
+  if(barTo)   barTo.textContent   = nextLeague ? nextLeague.name : '★ MAX';
+  if(barFill){
+    barFill.style.width      = pct+'%';
+    barFill.style.background = `linear-gradient(90deg,${league.color},${nextLeague?nextLeague.color:league.color})`;
+  }
 
   // History
   const histEl = document.getElementById('profile-history-list');
+  if(!histEl) return;
   const history = (myProfile.history||[]).slice().reverse().slice(0,8);
   if(!history.length){
     histEl.innerHTML='<div style="color:var(--text2);font-style:italic;font-size:.8rem;padding:8px 0">Sin partidas aún.</div>';
