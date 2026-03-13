@@ -807,17 +807,34 @@ async function updateEloAfterGame(result, rivalElo, rivalUid, myFactionId){
 async function initAuth(){
   onAuthStateChanged(async(user)=>{
     if(!user){
+      myProfile = null;
       showScreen('login');
       return;
     }
-    currentUser = user;
-    let profile = await loadProfile(user.uid);
-    if(!profile){
-      profile = await createProfile(user);
+    // Show a brief loading state
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    const loginEl = document.getElementById('screen-login');
+    if(loginEl){
+      loginEl.classList.add('active');
+      const errEl = document.getElementById('login-error');
+      if(errEl) errEl.textContent = 'Cargando perfil...';
     }
-    myProfile = profile;
 
-    if(!profile.username){
+    currentUser = user;
+    try {
+      let profile = await loadProfile(user.uid);
+      if(!profile) profile = await createProfile(user);
+      myProfile = profile;
+    } catch(e){
+      console.error('Profile load error:', e);
+      myProfile = {
+        uid: user.uid, username: '', email: user.email||'',
+        photoURL: user.photoURL||'', elo: 500,
+        wins:0, losses:0, draws:0, history:[], favFaction:''
+      };
+    }
+
+    if(!myProfile.username){
       showScreen('username');
       return;
     }
@@ -1069,9 +1086,18 @@ let G = {
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById('screen-'+id);
-  if(!el) return;
+  if(!el){ console.warn('screen not found: screen-'+id); return; }
   el.classList.add('active');
-  if(id==='profile') renderProfile();
+  if(id==='profile'){
+    if(myProfile) renderProfile();
+    else{
+      // Profile not loaded yet — wait and retry
+      const tryRender=setInterval(()=>{
+        if(myProfile){ clearInterval(tryRender); renderProfile(); }
+      },100);
+      setTimeout(()=>clearInterval(tryRender),5000);
+    }
+  }
   if(id==='ranking') renderRanking();
 }
 
