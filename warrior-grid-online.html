@@ -799,6 +799,8 @@ function renderBattle(v){
   // Siempre ocultar waiting y mostrar batalla cuando llega un update
   hideWaiting();
   showScreen('battle');
+  const isMyTurnCheck = v && v.turn===G.playerId;
+  if(!isMyTurnCheck) G.selUnit=null; // limpiar selección si no es mi turno
   const f  = factionById(G.myFaction);
   const ef = factionById(v[getEnemyId()].faction);
   const isMyTurn = v.turn===G.playerId;
@@ -874,7 +876,7 @@ function renderBattle(v){
       if(isMyTurn){
         cell.classList.add('own-unit');
         if(G.selUnit&&G.selUnit.r===ri&&G.selUnit.c===ci) cell.classList.add('sel');
-        cell.onclick=()=>selectUnit(ri,ci,myBoardRender);
+        cell.onclick=()=>selectUnit(ri,ci,myBoardRender,v);
       }
     }
   });
@@ -916,15 +918,14 @@ function renderBattle(v){
   // Log
   renderLog(attacks, v);
 
-  // Auto switch to attack board if unit selected
-  if(G.selUnit && isMyTurn) switchBoard('enemy');
+  // No auto-switch — el usuario controla manualmente
 }
 
-function selectUnit(ri,ci,boardRender){
+function selectUnit(ri,ci,boardRender,v){
   const d=boardRender[ri][ci];
   if(!d.wid||d.dead) return;
   G.selUnit=(G.selUnit&&G.selUnit.r===ri&&G.selUnit.c===ci)?null:{r:ri,c:ci};
-  // switch to enemy board to attack
+  renderBattle(v); // redibuja con la unidad seleccionada
   if(G.selUnit) switchBoard('enemy');
 }
 
