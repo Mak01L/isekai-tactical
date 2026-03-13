@@ -11,11 +11,11 @@
   --border:#3a2e1e; --gold:#c9a84c; --gold2:#e8c96d;
   --text:#d4c5a0; --text2:#8a7a5a;
   --red:#c0392b; --green:#27ae60; --orange:#e67e22;
-  --cell: 30px;
+  --cell: 39px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'EB Garamond',serif;font-size:16px;display:flex;flex-direction:column;}
+body{background:var(--bg);color:var(--text);font-family:'EB Garamond',serif;font-size:18px;display:flex;flex-direction:column;}
 body::before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(201,168,76,.012) 40px,rgba(201,168,76,.012) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(201,168,76,.012) 40px,rgba(201,168,76,.012) 41px);pointer-events:none;z-index:0;}
 
 /* ── SCREENS ── */
@@ -106,8 +106,8 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 
 /* GRID — responsive */
 .grid-wrap{overflow:auto;-webkit-overflow-scrolling:touch;max-width:100%;flex-shrink:0;}
-.grid{display:grid;grid-template-columns:18px repeat(10,var(--cell));grid-template-rows:18px repeat(10,var(--cell));gap:2px;touch-action:pan-x pan-y;}
-.gh{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.52rem;color:var(--text2);}
+.grid{display:grid;grid-template-columns:20px repeat(12,var(--cell));grid-template-rows:20px repeat(12,var(--cell));gap:2px;touch-action:pan-x pan-y;}
+.gh{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.65rem;color:var(--text2);}
 .cell{background:var(--bg3);border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:default;transition:background .1s,border-color .1s;user-select:none;position:relative;}
 .cell.clickable{cursor:pointer;}
 .cell.clickable:active{border-color:var(--gold);background:#1e1a12;}
@@ -123,7 +123,7 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 @keyframes pulseT{0%,100%{border-color:var(--orange);background:rgba(230,126,34,.06);}50%{border-color:#f39c12;background:rgba(230,126,34,.22);}}
 @keyframes flashH{0%{transform:scale(1.3);background:rgba(255,30,30,.7);}100%{transform:scale(1);}}
 .flash-hit{animation:flashH .3s ease;}
-.cell-icon{font-size:13px;line-height:1;pointer-events:none;}
+.cell-icon{font-size:18px;line-height:1;pointer-events:none;}
 
 /* WARRIOR LIST — horizontal scroll on place screen */
 .warrior-scroll{display:flex;gap:6px;overflow-x:auto;padding:4px 0 6px;-webkit-overflow-scrolling:touch;width:100%;flex-shrink:0;}
@@ -132,7 +132,7 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 .wchip{flex:0 0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;cursor:pointer;transition:border-color .15s;text-align:center;min-width:68px;touch-action:manipulation;}
 .wchip:active,.wchip.sel-chip{border-color:var(--gold2);background:rgba(232,201,109,.1);}
 .wchip.used{opacity:.3;pointer-events:none;}
-.wchip-icon{font-size:18px;display:block;margin-bottom:2px;}
+.wchip-icon{font-size:22px;display:block;margin-bottom:2px;}
 .wchip-name{font-family:'Cinzel',serif;font-size:.56rem;color:var(--gold2);display:block;white-space:nowrap;}
 .wchip-stats{font-size:.55rem;color:var(--text2);display:block;margin-top:1px;}
 .wchip-check{font-size:.55rem;color:var(--green);display:block;}
@@ -165,6 +165,8 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 .le.win{color:#80e898;border-left-color:var(--green);}
 .le.lose{color:#f0a0a0;border-left-color:var(--red);}
 .le.both{color:#c8a8e8;border-left-color:#9b59b6;}
+.le.killed{color:#ff4444;border-left-color:#cc0000;font-weight:500;}
+.le.defended{color:#80e898;border-left-color:var(--green);}
 .le.sys{color:var(--text2);border-left-color:#3a2e1e;font-style:italic;}
 
 /* WAITING OVERLAY */
@@ -185,8 +187,8 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 .st.atk{background:rgba(192,57,43,.28);color:#f0a0a0;border:1px solid rgba(192,57,43,.45);}
 .st.def{background:rgba(52,152,219,.22);color:#a0c8f0;border:1px solid rgba(52,152,219,.38);}
 
-@media(min-width:480px){:root{--cell:32px;}}
-@media(min-width:640px){:root{--cell:36px;}.cell-icon{font-size:16px;}}
+@media(min-width:480px){:root{--cell:42px;}}
+@media(min-width:640px){:root{--cell:47px;}.cell-icon{font-size:20px;}}
 </style>
 </head>
 <body>
@@ -412,13 +414,13 @@ const FACTIONS = [
   }
 ];
 
-const COLS = ['A','B','C','D','E','F','G','H','I','J'];
-const ROWS  = [1,2,3,4,5,6,7,8,9,10];
+const COLS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+const ROWS  = [1,2,3,4,5,6,7,8,9,10,11,12];
 
 function factionById(id){ return FACTIONS.find(f=>f.id===id); }
 function warriorById(fid,wid){ return factionById(fid)?.warriors.find(w=>w.id===wid); }
 function rgba(hex,a){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
-function mkBoard(){ return Array.from({length:10},()=>Array.from({length:10},()=>({wid:null,dead:false,miss:false}))); }
+function mkBoard(){ return Array.from({length:12},()=>Array.from({length:12},()=>({wid:null,dead:false,miss:false}))); }
 
 // ══════════════════════════════════════════════════════════
 // LOCAL STATE
@@ -1009,12 +1011,27 @@ function renderLog(attacks,v){
     const atkW=atkF?warriorById(a.attacker==='p1'?v.p1.faction:v.p2.faction,a.atkWid):null;
     const defW=defF?warriorById(a.target==='p1'?v.p1.faction:v.p2.faction,a.defWid):null;
     let cls='le',txt='';
+    const atkName = atkW ? `${atkW.icon}${atkW.name}` : '?';
+    const defName = defW ? `${defW.icon}${defW.name}` : '?';
+    const atkStats = atkW ? ` (ATK ${atkW.atk})` : '';
+    const defStats = defW ? ` (DEF ${defW.def})` : '';
+    // Was I the one being attacked?
+    const iWasTarget = a.target === G.playerId;
     if(a.result==='hit'){
-      cls='le win'; txt=`✓ [${a.coord}] ${atkW?.icon||'?'}${atkW?.name} eliminó a ${defW?.icon||'?'}${defW?.name}`;
+      if(iWasTarget){
+        // My unit was killed — red with cross
+        cls='le killed'; txt=`✝ [${a.coord}] ${atkName}${atkStats} mató a ${defName}${defStats}`;
+      } else {
+        cls='le win'; txt=`✓ [${a.coord}] ${atkName}${atkStats} eliminó a ${defName}${defStats}`;
+      }
     } else if(a.result==='both'){
-      cls='le both'; txt=`💥 [${a.coord}] Empate — ambos caen`;
+      cls='le both'; txt=`💥 [${a.coord}] Empate — ${atkName}${atkStats} vs ${defName}${defStats} — ambos caen`;
     } else if(a.result==='miss'){
-      cls='le lose'; txt=`✗ [${a.coord}] ${defW?.icon||'?'}${defW?.name} resistió`;
+      if(iWasTarget){
+        cls='le defended'; txt=`🛡 [${a.coord}] ${defName}${defStats} bloqueó a ${atkName}${atkStats}`;
+      } else {
+        cls='le lose'; txt=`✗ [${a.coord}] ${defName}${defStats} resistió a ${atkName}${atkStats}`;
+      }
     } else {
       cls='le'; txt=`· [${a.coord}] Vacío. Turno perdido`;
     }
