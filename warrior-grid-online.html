@@ -200,7 +200,7 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
   </div>
   <div class="home-tagline">Elige tu facción. Despliega tu ejército.<br>Destruye al enemigo.</div>
   <div class="home-actions">
-    <button class="btn primary big" onclick="goConfig()">⚔ Buscar Partida</button>
+    <button class="btn primary big" onclick="quickPlay()">⚔ Buscar Partida</button>
     <button class="btn big" onclick="showRules()">📜 Reglas</button>
   </div>
   <div id="rules-box" style="display:none;max-width:360px;margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:14px 16px;font-size:.8rem;line-height:1.7;color:var(--text2);">
@@ -445,6 +445,16 @@ function showScreen(id){
   document.getElementById('screen-'+id).classList.add('active');
 }
 
+// ══════════════════════════════════════════════════════════
+// DEFAULT FIREBASE CONFIG — Isekai Tactical
+// ══════════════════════════════════════════════════════════
+const DEFAULT_CONFIG = {
+  apiKey:      'AIzaSyAj_9FMQN3bqrGvjfOj_5VqTETpMfM_lqI',
+  databaseURL: 'https://sparklink-4k7hn-default-rtdb.firebaseio.com',
+  projectId:   'sparklink-4k7hn',
+  appId:       '1:467826294865:web:3c2be2c431619017727870'
+};
+
 function goHome(){ cleanup(); showScreen('home'); }
 function goConfig(){ showScreen('config'); loadSavedConfig(); }
 function showRules(){
@@ -452,20 +462,31 @@ function showRules(){
   b.style.display=b.style.display==='none'?'block':'none';
 }
 
+// Buscar Partida — conecta directo con config por defecto
+async function quickPlay(){
+  showScreen('match');
+  document.getElementById('match-spinner').textContent='🔍';
+  document.getElementById('match-info').textContent='Conectando...';
+  document.getElementById('match-sub').textContent='';
+  try {
+    await loadFirebase(DEFAULT_CONFIG);
+    startMatchmaking();
+  } catch(e){
+    document.getElementById('match-info').textContent='Error al conectar';
+    document.getElementById('match-sub').textContent=e.message;
+  }
+}
+
 // ══════════════════════════════════════════════════════════
-// CONFIG PERSISTENCE
+// CONFIG PERSISTENCE (pantalla manual, por si se necesita)
 // ══════════════════════════════════════════════════════════
 function loadSavedConfig(){
   const saved = localStorage.getItem('wg_firebase');
-  if(saved){
-    try{
-      const c=JSON.parse(saved);
-      document.getElementById('cfg-apiKey').value    = c.apiKey||'';
-      document.getElementById('cfg-dbUrl').value     = c.databaseURL||'';
-      document.getElementById('cfg-projectId').value = c.projectId||'';
-      document.getElementById('cfg-appId').value     = c.appId||'';
-    }catch(e){}
-  }
+  const c = saved ? JSON.parse(saved) : DEFAULT_CONFIG;
+  document.getElementById('cfg-apiKey').value    = c.apiKey||'';
+  document.getElementById('cfg-dbUrl').value     = c.databaseURL||'';
+  document.getElementById('cfg-projectId').value = c.projectId||'';
+  document.getElementById('cfg-appId').value     = c.appId||'';
 }
 
 async function connectFirebase(){
@@ -1059,7 +1080,7 @@ function cleanup(){
 }
 
 // Expose to inline onclick
-window.goHome=goHome; window.goConfig=goConfig; window.showRules=showRules;
+window.goHome=goHome; window.quickPlay=quickPlay; window.goConfig=goConfig; window.showRules=showRules;
 window.connectFirebase=connectFirebase; window.cancelMatch=cancelMatch;
 window.confirmFaction=confirmFaction; window.clearPlacement=clearPlacement;
 window.readyPlacement=readyPlacement; window.switchBoard=switchBoard;
