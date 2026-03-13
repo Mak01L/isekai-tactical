@@ -249,6 +249,94 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 @media(min-width:480px){:root{--cell:42px;}}
 @media(min-width:640px){:root{--cell:47px;}.cell-icon{font-size:22px;}}
 
+/* ══ LOGIN SCREEN ══ */
+#screen-login{justify-content:center;gap:0;}
+.login-content{display:flex;flex-direction:column;align-items:center;gap:22px;padding:20px;width:100%;max-width:360px;}
+.login-emblem{font-size:64px;filter:drop-shadow(0 0 20px rgba(212,168,67,.5));animation:floatY 4s ease-in-out infinite;}
+.login-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,6vw,2rem);color:var(--gold2);
+  text-shadow:0 0 30px rgba(212,168,67,.5);text-align:center;line-height:1.3;}
+.login-sub{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.22em;color:var(--text2);text-transform:uppercase;}
+.login-divider{width:160px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.login-desc{font-style:italic;color:var(--text2);font-size:.88rem;text-align:center;line-height:1.7;max-width:280px;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:280px;
+  padding:14px 24px;background:rgba(255,255,255,.06);border:1px solid var(--border2);border-radius:4px;
+  font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.1em;color:var(--text);cursor:pointer;
+  transition:all .2s;text-transform:uppercase;touch-action:manipulation;}
+.btn-google:hover,.btn-google:active{background:rgba(255,255,255,.12);border-color:var(--gold);}
+.btn-google svg{flex:0 0 20px;height:20px;}
+.login-error{color:var(--red2);font-size:.78rem;text-align:center;min-height:20px;}
+
+/* ══ PROFILE SCREEN ══ */
+#screen-profile{gap:14px;padding:20px 16px 60px;}
+.profile-header{width:100%;max-width:480px;display:flex;align-items:center;gap:16px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.profile-avatar{width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);
+  object-fit:cover;flex:0 0 auto;background:var(--bg3);}
+.profile-avatar-placeholder{width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);
+  background:rgba(212,168,67,.1);display:flex;align-items:center;justify-content:center;
+  font-size:28px;flex:0 0 auto;}
+.profile-info{flex:1;min-width:0;}
+.profile-username{font-family:'Cinzel',serif;font-size:1rem;color:var(--gold2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.profile-email{font-size:.72rem;color:var(--text2);margin-top:2px;}
+.profile-league-badge{display:inline-flex;align-items:center;gap:6px;margin-top:6px;
+  padding:3px 10px;border-radius:20px;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;}
+
+.profile-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:480px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;
+  padding:12px 8px;text-align:center;}
+.stat-num{font-family:'Cinzel Decorative',serif;font-size:1.4rem;color:var(--gold2);}
+.stat-label{font-family:'Cinzel',serif;font-size:.55rem;color:var(--text2);letter-spacing:.1em;
+  text-transform:uppercase;margin-top:2px;}
+
+.elo-bar-wrap{width:100%;max-width:480px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:14px 16px;}
+.elo-bar-label{display:flex;justify-content:space-between;font-family:'Cinzel',serif;font-size:.65rem;color:var(--text2);margin-bottom:8px;}
+.elo-bar-track{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;}
+.elo-bar-fill{height:100%;border-radius:5px;transition:width .8s ease;}
+
+.profile-history{width:100%;max-width:480px;}
+.history-title{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.18em;color:var(--text2);
+  text-transform:uppercase;margin-bottom:8px;}
+.history-item{display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:5px;margin-bottom:5px;font-size:.78rem;}
+.history-result{font-family:'Cinzel',serif;font-size:.65rem;padding:2px 8px;border-radius:3px;flex:0 0 auto;}
+.history-result.win{background:rgba(46,204,113,.15);color:var(--green2);border:1px solid rgba(46,204,113,.3);}
+.history-result.lose{background:rgba(224,53,53,.12);color:var(--red2);border:1px solid rgba(224,53,53,.25);}
+.history-result.draw{background:rgba(155,89,182,.12);color:#c8a0ff;border:1px solid rgba(155,89,182,.25);}
+.history-elo{margin-left:auto;font-family:'Cinzel',serif;font-size:.65rem;}
+.history-elo.pos{color:var(--green2);}
+.history-elo.neg{color:var(--red2);}
+
+.profile-actions{position:fixed;bottom:0;left:0;right:0;background:rgba(5,4,10,.95);
+  border-top:1px solid var(--border2);padding:10px 16px;display:flex;gap:8px;z-index:60;}
+
+/* ══ RANKING SCREEN ══ */
+#screen-ranking{gap:12px;padding:20px 16px 40px;}
+.ranking-list{width:100%;max-width:480px;display:flex;flex-direction:column;gap:6px;}
+.rank-item{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:6px;}
+.rank-item.me{border-color:var(--gold);background:rgba(212,168,67,.05);}
+.rank-pos{font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--text2);min-width:28px;text-align:center;}
+.rank-pos.top1{color:#ffd700;}
+.rank-pos.top2{color:#c0c0c0;}
+.rank-pos.top3{color:#cd7f32;}
+.rank-avatar{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);
+  object-fit:cover;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.rank-info{flex:1;min-width:0;}
+.rank-name{font-family:'Cinzel',serif;font-size:.78rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rank-league{font-size:.62rem;color:var(--text2);margin-top:1px;}
+.rank-elo{font-family:'Cinzel Decorative',serif;font-size:.85rem;color:var(--gold2);}
+
+/* ══ USERNAME SETUP ══ */
+#screen-username{justify-content:center;gap:0;}
+.username-content{display:flex;flex-direction:column;align-items:center;gap:18px;padding:20px;width:100%;max-width:340px;}
+.username-input{background:var(--bg3);border:1px solid var(--border2);border-radius:4px;
+  padding:12px 16px;color:var(--text);font-family:'Cinzel',serif;font-size:.85rem;
+  letter-spacing:.08em;outline:none;width:100%;text-align:center;transition:border-color .2s;}
+.username-input:focus{border-color:var(--gold);}
+.username-hint{font-size:.72rem;color:var(--text2);font-style:italic;text-align:center;}
+.username-error{color:var(--red2);font-size:.72rem;text-align:center;min-height:18px;}
+
 /* ══ DICE OVERLAY ══ */
 #dice-overlay{display:none;position:fixed;inset:0;background:rgba(3,2,10,.96);
   z-index:90;align-items:center;justify-content:center;flex-direction:column;gap:20px;
@@ -311,50 +399,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </head>
 <body>
 
-<!-- ══ SCREEN: HOME ══ -->
-<div id="screen-home" class="screen active">
-  <div class="home-bg">
-    <svg viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="rg1" cx="30%" cy="20%"><stop offset="0%" stop-color="#6040c0" stop-opacity=".15"/><stop offset="100%" stop-color="#6040c0" stop-opacity="0"/></radialGradient>
-        <radialGradient id="rg2" cx="70%" cy="80%"><stop offset="0%" stop-color="#c04080" stop-opacity=".12"/><stop offset="100%" stop-color="#c04080" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="400" height="700" fill="url(#rg1)"/><rect width="400" height="700" fill="url(#rg2)"/>
-      <line x1="200" y1="0" x2="200" y2="700" stroke="#d4a843" stroke-opacity=".06" stroke-width="1"/>
-      <line x1="0" y1="350" x2="400" y2="350" stroke="#d4a843" stroke-opacity=".06" stroke-width="1"/>
-      <polygon points="200,60 220,100 200,90 180,100" fill="#d4a843" fill-opacity=".08"/>
-      <polygon points="200,640 220,600 200,610 180,600" fill="#d4a843" fill-opacity=".08"/>
-      <rect x="30" y="30" width="340" height="640" rx="2" fill="none" stroke="#d4a843" stroke-opacity=".07" stroke-width="1"/>
-      <rect x="50" y="50" width="300" height="600" rx="2" fill="none" stroke="#d4a843" stroke-opacity=".04" stroke-width="1"/>
-    </svg>
-  </div>
-  <div class="home-corner tl">✦ ISEKAI</div>
-  <div class="home-corner tr">TACTICAL ✦</div>
-  <div class="home-corner bl">v1.0</div>
-  <div class="home-corner br">⚔ 5 FACCIONES</div>
-  <div class="home-content">
-    <div class="home-emblem">⚔</div>
-    <div class="home-title">Isekai<br>Tactical</div>
-    <div class="home-subtitle">Batalla de Facciones Online</div>
-    <div class="home-divider"></div>
-    <div class="home-tagline">Elige tu facción. Despliega tu ejército.<br>Destruye al enemigo.</div>
-    <div class="home-actions" style="margin-top:8px;">
-      <button class="btn primary big" onclick="quickPlay()">⚔ Buscar Partida</button>
-      <button class="btn big" onclick="showRules()">📜 Reglas</button>
-    </div>
-    <div id="rules-box" style="display:none;max-width:360px;margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 18px;font-size:.82rem;line-height:1.8;color:var(--text2);">
-      <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold2);letter-spacing:.15em;margin-bottom:10px;">— REGLAS DE COMBATE —</div>
-      • Elige tu facción (5 disponibles, 8 guerreros cada una).<br>
-      • Coloca tus 8 guerreros — <strong style="color:var(--text)">1 guerrero = 1 celda</strong>.<br>
-      • Por turno: elige un guerrero y ataca una coordenada enemiga.<br>
-      • <strong style="color:var(--red2)">ATK &gt; DEF</strong> → el defensor muere al instante.<br>
-      • <strong style="color:var(--purple)">ATK = DEF</strong> → ambos mueren.<br>
-      • <strong style="color:var(--blue)">ATK &lt; DEF</strong> → el defensor resiste, turno perdido.<br>
-      • Celda vacía → turno perdido.<br>
-      • Gana quien elimine todos los guerreros rivales.
-    </div>
-  </div>
-</div>
+
 
 <!-- ══ SCREEN: FIREBASE CONFIG ══ -->
 <div id="screen-config" class="screen">
@@ -450,6 +495,139 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="log-mini" id="battle-log"></div>
 </div>
 
+<!-- ══ SCREEN: LOGIN ══ -->
+<div id="screen-login" class="screen active">
+  <div class="home-bg">
+    <svg viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="lg1" cx="50%" cy="30%"><stop offset="0%" stop-color="#6040c0" stop-opacity=".18"/><stop offset="100%" stop-color="#6040c0" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="400" height="700" fill="url(#lg1)"/>
+      <rect x="30" y="30" width="340" height="640" rx="2" fill="none" stroke="#d4a843" stroke-opacity=".07" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="login-content">
+    <div class="login-emblem">⚔</div>
+    <div class="login-title">Isekai Tactical</div>
+    <div class="login-sub">Batalla de Facciones Online</div>
+    <div class="login-divider"></div>
+    <div class="login-desc">Inicia sesión para guardar tu progreso, subir en el ranking y desafiar rivales de tu nivel.</div>
+    <button class="btn-google" onclick="loginGoogle()">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Continuar con Google
+    </button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ══ SCREEN: USERNAME SETUP ══ -->
+<div id="screen-username" class="screen">
+  <div class="username-content">
+    <div style="font-size:48px;animation:floatY 4s ease-in-out infinite">⚔</div>
+    <div class="screen-header" style="margin-bottom:0">
+      <h1>Elige tu nombre</h1>
+      <div class="screen-sub">Tu identidad en el campo de batalla</div>
+    </div>
+    <input class="username-input" id="username-input" maxlength="16" placeholder="Nombre de guerrero..." autocomplete="off" spellcheck="false">
+    <div class="username-hint">Entre 3 y 16 caracteres. Sin espacios.</div>
+    <div class="username-error" id="username-error"></div>
+    <button class="btn primary big" onclick="saveUsername()">Entrar al Campo de Batalla →</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN: HOME (after login) ══ -->
+<div id="screen-home" class="screen">
+  <div class="home-bg">
+    <svg viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="rg1" cx="30%" cy="20%"><stop offset="0%" stop-color="#6040c0" stop-opacity=".15"/><stop offset="100%" stop-color="#6040c0" stop-opacity="0"/></radialGradient>
+        <radialGradient id="rg2" cx="70%" cy="80%"><stop offset="0%" stop-color="#c04080" stop-opacity=".12"/><stop offset="100%" stop-color="#c04080" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="400" height="700" fill="url(#rg1)"/><rect width="400" height="700" fill="url(#rg2)"/>
+      <line x1="200" y1="0" x2="200" y2="700" stroke="#d4a843" stroke-opacity=".06" stroke-width="1"/>
+      <line x1="0" y1="350" x2="400" y2="350" stroke="#d4a843" stroke-opacity=".06" stroke-width="1"/>
+      <rect x="30" y="30" width="340" height="640" rx="2" fill="none" stroke="#d4a843" stroke-opacity=".07" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="home-corner tl" id="home-league-corner">⚔</div>
+  <div class="home-corner tr" id="home-elo-corner">0 ELO</div>
+  <div class="home-corner bl" id="home-user-corner">—</div>
+  <div class="home-corner br" onclick="showScreen('ranking')" style="cursor:pointer">🏆 Ranking</div>
+  <div class="home-content">
+    <div class="home-emblem">⚔</div>
+    <div class="home-title">Isekai<br>Tactical</div>
+    <div class="home-subtitle">Batalla de Facciones Online</div>
+    <div class="home-divider"></div>
+    <div class="home-tagline">Elige tu facción. Despliega tu ejército.<br>Destruye al enemigo.</div>
+    <div class="home-actions" style="margin-top:8px;">
+      <button class="btn primary big" onclick="quickPlay()">⚔ Buscar Partida</button>
+      <button class="btn big" onclick="showScreen('profile')">👤 Mi Perfil</button>
+      <button class="btn big" onclick="showRules()">📜 Reglas</button>
+    </div>
+    <div id="rules-box" style="display:none;max-width:360px;margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 18px;font-size:.82rem;line-height:1.8;color:var(--text2);">
+      <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold2);letter-spacing:.15em;margin-bottom:10px;">— REGLAS DE COMBATE —</div>
+      • Elige tu facción (5 disponibles, 8 guerreros cada una).<br>
+      • Coloca tus 8 guerreros — <strong style="color:var(--text)">1 guerrero = 1 celda</strong>.<br>
+      • Por turno: elige un guerrero y ataca una coordenada enemiga.<br>
+      • <strong style="color:var(--red2)">ATK &gt; DEF</strong> → el defensor muere al instante.<br>
+      • <strong style="color:var(--purple)">ATK = DEF</strong> → ambos mueren.<br>
+      • <strong style="color:var(--blue)">ATK &lt; DEF</strong> → el defensor resiste, turno perdido.<br>
+      • Celda vacía → turno perdido.<br>
+      • Gana quien elimine todos los guerreros rivales.
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN: PROFILE ══ -->
+<div id="screen-profile" class="screen">
+  <div class="screen-header"><h1>Mi Perfil</h1></div>
+  <div class="profile-header" id="profile-header">
+    <div class="profile-avatar-placeholder" id="profile-avatar">⚔</div>
+    <div class="profile-info">
+      <div class="profile-username" id="profile-username">—</div>
+      <div class="profile-email" id="profile-email">—</div>
+      <div class="profile-league-badge" id="profile-league-badge">—</div>
+    </div>
+  </div>
+  <div class="profile-stats-grid">
+    <div class="stat-card"><div class="stat-num" id="stat-elo">0</div><div class="stat-label">ELO</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-wins">0</div><div class="stat-label">Victorias</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-losses">0</div><div class="stat-label">Derrotas</div></div>
+  </div>
+  <div class="elo-bar-wrap">
+    <div class="elo-bar-label">
+      <span id="elo-bar-from">—</span>
+      <span id="elo-bar-elo">0 ELO</span>
+      <span id="elo-bar-to">—</span>
+    </div>
+    <div class="elo-bar-track"><div class="elo-bar-fill" id="elo-bar-fill" style="width:0%"></div></div>
+  </div>
+  <div class="profile-history">
+    <div class="history-title">Últimas partidas</div>
+    <div id="profile-history-list"></div>
+  </div>
+  <div class="profile-actions">
+    <button class="btn" style="flex:1" onclick="showScreen('home')">← Volver</button>
+    <button class="btn danger" style="flex:1" onclick="doSignOut()">Cerrar Sesión</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN: RANKING ══ -->
+<div id="screen-ranking" class="screen">
+  <div class="screen-header"><h1>🏆 Ranking</h1><div class="screen-sub">Top Guerreros</div></div>
+  <div class="ranking-list" id="ranking-list">
+    <div style="text-align:center;color:var(--text2);font-style:italic;padding:20px;">Cargando ranking...</div>
+  </div>
+  <div style="margin-top:12px;width:100%;max-width:480px;">
+    <button class="btn" style="width:100%" onclick="showScreen('home')">← Volver</button>
+  </div>
+</div>
+
 <!-- ══ DICE OVERLAY ══ -->
 <div id="dice-overlay">
   <div class="dice-title">⚔ Iniciativa de Batalla</div>
@@ -510,20 +688,270 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 // ══════════════════════════════════════════════════════════
 let db, ref, set, get, onValue, push, remove, update, serverTimestamp;
 
+let auth, googleProvider, signInWithPopup, onAuthStateChanged, signOut;
+let currentUser = null;
+
 async function loadFirebase(config) {
-  const app = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-  const rtdb = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+  const app    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const rtdb   = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+  const fauth  = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
   const firebaseApp = app.initializeApp(config);
   db = rtdb.getDatabase(firebaseApp);
-  ref = rtdb.ref;
-  set = rtdb.set;
-  get = rtdb.get;
-  onValue = rtdb.onValue;
-  push = rtdb.push;
-  remove = rtdb.remove;
-  update = rtdb.update;
-  serverTimestamp = rtdb.serverTimestamp;
+  ref = rtdb.ref; set = rtdb.set; get = rtdb.get;
+  onValue = rtdb.onValue; push = rtdb.push; remove = rtdb.remove;
+  update = rtdb.update; serverTimestamp = rtdb.serverTimestamp;
+
+  auth = fauth.getAuth(firebaseApp);
+  googleProvider = new fauth.GoogleAuthProvider();
+  signInWithPopup = (p) => fauth.signInWithPopup(auth, p);
+  onAuthStateChanged = (cb) => fauth.onAuthStateChanged(auth, cb);
+  signOut = () => fauth.signOut(auth);
+}
+
+// ══════════════════════════════════════════════════════════
+// ELO + LEAGUES SYSTEM
+// ══════════════════════════════════════════════════════════
+const LEAGUES = [
+  {name:'Hierro',   min:0,    max:499,  color:'#8a8a8a', emoji:'⚙'},
+  {name:'Bronce',   min:500,  max:999,  color:'#cd7f32', emoji:'🥉'},
+  {name:'Plata',    min:1000, max:1499, color:'#c0c0c0', emoji:'🥈'},
+  {name:'Oro',      min:1500, max:1999, color:'#ffd700', emoji:'🥇'},
+  {name:'Platino',  min:2000, max:2499, color:'#40e0d0', emoji:'💎'},
+  {name:'Diamante', min:2500, max:99999,color:'#b9f2ff', emoji:'💠'},
+];
+
+const STARTING_ELO = 500;
+const ELO_WIN  = 25;
+const ELO_LOSS = 20;
+
+function getLeague(elo){
+  return LEAGUES.find(l=>elo>=l.min&&elo<=l.max) || LEAGUES[0];
+}
+
+function eloChange(myElo, rivalElo, won, draw){
+  // Base K-factor adjusted by league gap
+  const gap = Math.abs(myElo - rivalElo);
+  const bonus = won && rivalElo > myElo ? Math.round(gap/100)*5 : 0;
+  const penalty = !won && rivalElo < myElo ? Math.round(gap/100)*3 : 0;
+  if(draw) return 0;
+  if(won)  return ELO_WIN  + bonus;
+  return  -(ELO_LOSS + penalty);
+}
+
+// ── USER PROFILE ──
+let myProfile = null;
+
+async function loadProfile(uid){
+  const snap = await get(ref(db,'users/'+uid));
+  if(snap.exists()) return snap.val();
+  return null;
+}
+
+async function createProfile(user){
+  const profile = {
+    uid:        user.uid,
+    username:   '',
+    email:      user.email||'',
+    photoURL:   user.photoURL||'',
+    elo:        STARTING_ELO,
+    wins:       0,
+    losses:     0,
+    draws:      0,
+    favFaction: '',
+    history:    [],
+    createdAt:  Date.now(),
+  };
+  await set(ref(db,'users/'+user.uid), profile);
+  return profile;
+}
+
+async function updateEloAfterGame(result, rivalElo, rivalUid, myFactionId){
+  if(!myProfile) return;
+  const won  = result==='win';
+  const draw = result==='draw';
+  const delta = eloChange(myProfile.elo, rivalElo, won, draw);
+  const newElo = Math.max(0, myProfile.elo + delta);
+
+  const historyEntry = {
+    result, delta, myElo:newElo, rivalElo,
+    faction:myFactionId, ts:Date.now()
+  };
+
+  const history = [...(myProfile.history||[]), historyEntry].slice(-20);
+
+  const updates = {
+    elo:        newElo,
+    wins:       myProfile.wins   + (won?1:0),
+    losses:     myProfile.losses + (result==='loss'?1:0),
+    draws:      myProfile.draws  + (draw?1:0),
+    history,
+    favFaction: myFactionId,
+  };
+
+  await update(ref(db,'users/'+myProfile.uid), updates);
+  myProfile = {...myProfile, ...updates};
+
+  // Update leaderboard entry
+  await set(ref(db,'leaderboard/'+myProfile.uid), {
+    username: myProfile.username,
+    photoURL: myProfile.photoURL||'',
+    elo:      newElo,
+    wins:     updates.wins,
+    losses:   updates.losses,
+    uid:      myProfile.uid,
+  });
+}
+
+// ── AUTH FLOW ──
+async function initAuth(){
+  onAuthStateChanged(async(user)=>{
+    if(!user){
+      showScreen('login');
+      return;
+    }
+    currentUser = user;
+    let profile = await loadProfile(user.uid);
+    if(!profile){
+      profile = await createProfile(user);
+    }
+    myProfile = profile;
+
+    if(!profile.username){
+      showScreen('username');
+      return;
+    }
+    updateHomeCorners();
+    showScreen('home');
+  });
+}
+
+async function loginGoogle(){
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  try{
+    await signInWithPopup(googleProvider);
+    // onAuthStateChanged handles the rest
+  } catch(e){
+    errEl.textContent = 'Error al iniciar sesión: '+e.message;
+  }
+}
+
+async function saveUsername(){
+  const input = document.getElementById('username-input').value.trim();
+  const errEl = document.getElementById('username-error');
+  if(input.length<3||input.length>16||/\s/.test(input)){
+    errEl.textContent='Entre 3 y 16 caracteres, sin espacios.'; return;
+  }
+  // Check uniqueness
+  const snap = await get(ref(db,'usernames/'+input.toLowerCase()));
+  if(snap.exists()&&snap.val()!==currentUser.uid){
+    errEl.textContent='Ese nombre ya está en uso.'; return;
+  }
+  errEl.textContent='';
+  await update(ref(db,'users/'+currentUser.uid),{username:input, favFaction:''});
+  await set(ref(db,'usernames/'+input.toLowerCase()), currentUser.uid);
+  await set(ref(db,'leaderboard/'+currentUser.uid),{
+    username:input, photoURL:currentUser.photoURL||'',
+    elo:STARTING_ELO, wins:0, losses:0, uid:currentUser.uid
+  });
+  myProfile = {...myProfile, username:input};
+  updateHomeCorners();
+  showScreen('home');
+}
+
+async function doSignOut(){
+  cleanup();
+  myProfile=null; currentUser=null;
+  await signOut();
+  showScreen('login');
+}
+
+function updateHomeCorners(){
+  if(!myProfile) return;
+  const league = getLeague(myProfile.elo);
+  const el1=document.getElementById('home-league-corner');
+  const el2=document.getElementById('home-elo-corner');
+  const el3=document.getElementById('home-user-corner');
+  if(el1) el1.textContent=`${league.emoji} ${league.name}`;
+  if(el2) el2.textContent=`${myProfile.elo} ELO`;
+  if(el3) el3.textContent=myProfile.username||'—';
+}
+
+function renderProfile(){
+  if(!myProfile) return;
+  const league = getLeague(myProfile.elo);
+  const nextLeague = LEAGUES[LEAGUES.indexOf(league)+1];
+
+  // Avatar
+  const avatarEl = document.getElementById('profile-avatar');
+  if(myProfile.photoURL){
+    avatarEl.outerHTML=`<img class="profile-avatar" id="profile-avatar" src="${myProfile.photoURL}" onerror="this.outerHTML='<div class=profile-avatar-placeholder id=profile-avatar>⚔</div>'">`;
+  }
+
+  document.getElementById('profile-username').textContent = myProfile.username||'Sin nombre';
+  document.getElementById('profile-email').textContent = myProfile.email||'';
+
+  const badge = document.getElementById('profile-league-badge');
+  badge.textContent = `${league.emoji} ${league.name}`;
+  badge.style.background=`${league.color}22`;
+  badge.style.color=league.color;
+  badge.style.border=`1px solid ${league.color}55`;
+
+  document.getElementById('stat-elo').textContent = myProfile.elo;
+  document.getElementById('stat-wins').textContent = myProfile.wins||0;
+  document.getElementById('stat-losses').textContent = myProfile.losses||0;
+
+  // ELO bar
+  const from = league.min, to = nextLeague ? nextLeague.min : league.max;
+  const pct = Math.min(100, Math.round(((myProfile.elo-from)/(to-from))*100));
+  document.getElementById('elo-bar-from').textContent = league.name;
+  document.getElementById('elo-bar-elo').textContent = `${myProfile.elo} ELO`;
+  document.getElementById('elo-bar-to').textContent = nextLeague ? nextLeague.name : '★ MAX';
+  document.getElementById('elo-bar-fill').style.width = pct+'%';
+  document.getElementById('elo-bar-fill').style.background = `linear-gradient(90deg,${league.color},${nextLeague?nextLeague.color:league.color})`;
+
+  // History
+  const histEl = document.getElementById('profile-history-list');
+  const history = (myProfile.history||[]).slice().reverse().slice(0,8);
+  if(!history.length){
+    histEl.innerHTML='<div style="color:var(--text2);font-style:italic;font-size:.8rem;padding:8px 0">Sin partidas aún.</div>';
+    return;
+  }
+  histEl.innerHTML = history.map(h=>{
+    const f=factionById(h.faction);
+    const dStr=h.delta>0?`+${h.delta}`:`${h.delta}`;
+    return `<div class="history-item">
+      <div class="history-result ${h.result}">${h.result==='win'?'Victoria':h.result==='loss'?'Derrota':'Empate'}</div>
+      <div>${f?f.emblem+' '+f.name:'—'}</div>
+      <div class="history-elo ${h.delta>=0?'pos':'neg'}">${dStr} ELO</div>
+    </div>`;
+  }).join('');
+}
+
+async function renderRanking(){
+  const snap = await get(ref(db,'leaderboard'));
+  const el = document.getElementById('ranking-list');
+  if(!snap.exists()){el.innerHTML='<div style="text-align:center;color:var(--text2);font-style:italic;padding:20px">Sin datos aún.</div>'; return;}
+  const players = [];
+  snap.forEach(c=>players.push(c.val()));
+  players.sort((a,b)=>b.elo-a.elo);
+  const top = players.slice(0,20);
+  el.innerHTML = top.map((p,i)=>{
+    const league=getLeague(p.elo);
+    const isMe = myProfile&&p.uid===myProfile.uid;
+    const posClass = i===0?'top1':i===1?'top2':i===2?'top3':'';
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+    return `<div class="rank-item${isMe?' me':''}">
+      <div class="rank-pos ${posClass}">${medal}</div>
+      <div class="rank-avatar">${p.photoURL?`<img src="${p.photoURL}" style="width:36px;height:36px;border-radius:50%;object-fit:cover" onerror="this.outerHTML='⚔'">`:'⚔'}</div>
+      <div class="rank-info">
+        <div class="rank-name">${p.username}${isMe?' (Tú)':''}</div>
+        <div class="rank-league">${league.emoji} ${league.name} · ${p.wins||0}V ${p.losses||0}D</div>
+      </div>
+      <div class="rank-elo">${p.elo}</div>
+    </div>`;
+  }).join('');
 }
 
 // ══════════════════════════════════════════════════════════
@@ -622,7 +1050,11 @@ let G = {
 // ══════════════════════════════════════════════════════════
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+id).classList.add('active');
+  const el=document.getElementById('screen-'+id);
+  if(!el) return;
+  el.classList.add('active');
+  if(id==='profile') renderProfile();
+  if(id==='ranking') renderRanking();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -635,7 +1067,7 @@ const DEFAULT_CONFIG = {
   appId:       '1:467826294865:web:3c2be2c431619017727870'
 };
 
-function goHome(){ cleanup(); showScreen('home'); }
+function goHome(){ cleanup(); updateHomeCorners(); showScreen('home'); }
 function goConfig(){ showScreen('config'); loadSavedConfig(); }
 function showRules(){
   const b=document.getElementById('rules-box');
@@ -644,17 +1076,12 @@ function showRules(){
 
 // Buscar Partida — conecta directo con config por defecto
 async function quickPlay(){
+  if(!myProfile){showScreen('login');return;}
   showScreen('match');
   document.getElementById('match-spinner').textContent='🔍';
-  document.getElementById('match-info').textContent='Conectando...';
-  document.getElementById('match-sub').textContent='';
-  try {
-    await loadFirebase(DEFAULT_CONFIG);
-    startMatchmaking();
-  } catch(e){
-    document.getElementById('match-info').textContent='Error al conectar';
-    document.getElementById('match-sub').textContent=e.message;
-  }
+  document.getElementById('match-info').textContent='Buscando rival de tu nivel...';
+  document.getElementById('match-sub').textContent=`Tu ELO: ${myProfile.elo}`;;
+  startMatchmaking();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -696,27 +1123,35 @@ async function connectFirebase(){
 let matchListener = null;
 
 async function startMatchmaking(){
-  showScreen('match');
-  document.getElementById('match-spinner').textContent='🔍';
-  document.getElementById('match-info').textContent='Buscando partida...';
-  document.getElementById('match-sub').textContent='Esperando a otro jugador';
   document.getElementById('match-code').textContent='';
-
   G.playerId = null;
   G.gameId   = null;
 
   const queueRef = ref(db, 'queue');
   const snap = await get(queueRef);
 
-  // Look for open slot
+  // Look for open slot — prefer ELO-close opponents (±300), fallback to any
   let foundGame = null;
+  const myElo = myProfile?.elo || STARTING_ELO;
+  const ELO_RANGE = 300;
   if(snap.exists()){
+    // First pass: close ELO
     snap.forEach(child=>{
       const v = child.val();
-      if(!foundGame && v.status==='waiting' && !v.p2){
-        foundGame = { id: child.key, data: v };
+      if(!foundGame && v.status==='waiting' && !v.p2 && v.uid!==currentUser?.uid){
+        const diff = Math.abs((v.elo||STARTING_ELO) - myElo);
+        if(diff<=ELO_RANGE) foundGame={id:child.key,data:v};
       }
     });
+    // Second pass: any open game (after 10s wait or if none found)
+    if(!foundGame){
+      snap.forEach(child=>{
+        const v = child.val();
+        if(!foundGame && v.status==='waiting' && !v.p2 && v.uid!==currentUser?.uid){
+          foundGame={id:child.key,data:v};
+        }
+      });
+    }
   }
 
   if(foundGame){
@@ -728,15 +1163,15 @@ async function startMatchmaking(){
     await update(ref(db,'queue/'+G.gameId), { p2: true, status:'full' });
     await set(G.gameRef, {
       status: 'faction',
-      p1: { faction: null, board: null, ready: false },
-      p2: { faction: null, board: null, ready: false },
+      p1: { faction: null, board: null, ready: false, uid: foundGame.data.uid||'', elo: foundGame.data.elo||STARTING_ELO, username: foundGame.data.username||'P1' },
+      p2: { faction: null, board: null, ready: false, uid: currentUser?.uid||'', elo: myProfile?.elo||STARTING_ELO, username: myProfile?.username||'P2' },
       turn: 'p1',
       attacks: [],
       log: []
     });
 
-    document.getElementById('match-info').textContent='¡Partida encontrada!';
-    document.getElementById('match-sub').textContent='Cargando...';
+    document.getElementById('match-info').textContent='¡Rival encontrado!';
+    document.getElementById('match-sub').textContent=`vs ${foundGame.data.username||'Rival'} (${foundGame.data.elo||STARTING_ELO} ELO)`;
     startFactionPhase();
   } else {
     // Create game as P1
@@ -745,11 +1180,13 @@ async function startMatchmaking(){
     G.gameId  = newRef.key;
     G.gameRef = ref(db,'games/'+G.gameId);
 
-    await set(newRef, { status:'waiting', p2: false, created: Date.now() });
+    await set(newRef, { status:'waiting', p2: false, created: Date.now(),
+      uid: currentUser?.uid||'anon', elo: myProfile?.elo||STARTING_ELO,
+      username: myProfile?.username||'—' });
     await set(G.gameRef, {
       status: 'faction',
-      p1: { faction: null, board: null, ready: false },
-      p2: { faction: null, board: null, ready: false },
+      p1: { faction: null, board: null, ready: false, uid: currentUser?.uid||'', elo: myProfile?.elo||STARTING_ELO, username: myProfile?.username||'P1' },
+      p2: { faction: null, board: null, ready: false, uid:'', elo:STARTING_ELO, username:'P2' },
       turn: 'p1',
       attacks: [],
       log: []
@@ -1345,15 +1782,34 @@ function renderLog(attacks,v){
   box.scrollTop=box.scrollHeight;
 }
 
-function handleGameOver(v){
+async function handleGameOver(v){
   hideWaiting();
   const won  = v.winner===G.playerId;
   const draw = v.winner==='draw';
   const f=factionById(G.myFaction);
+
+  // Compute ELO
+  const eid = getEnemyId();
+  const rivalElo = v[eid]?.elo || STARTING_ELO;
+  const rivalUid = v[eid]?.uid || '';
+  const result = draw?'draw':(won?'win':'loss');
+  const delta = eloChange(myProfile?.elo||STARTING_ELO, rivalElo, won, draw);
+  const newElo = Math.max(0,(myProfile?.elo||STARTING_ELO)+delta);
+
+  if(myProfile){
+    await updateEloAfterGame(result, rivalElo, rivalUid, G.myFaction);
+    updateHomeCorners();
+  }
+
+  const league = getLeague(newElo);
+  const deltaStr = delta>0?`+${delta} ELO`:`${delta} ELO`;
   document.getElementById('win-emblem').textContent=draw?'⚡':(won?'🏆':'💀');
   document.getElementById('win-title').textContent=draw?'¡Empate épico!':(won?'¡Victoria!':'Derrota');
-  document.getElementById('win-sub').textContent=draw?'Ambos ejércitos se aniquilaron.'
-    :(won?`${f.emblem} ${f.name} ha dominado el campo de batalla.`:'El rival destruyó tu ejército.');
+  document.getElementById('win-sub').innerHTML=draw
+    ?'Ambos ejércitos se aniquilaron.'
+    :(won
+      ?`${f.emblem} ${f.name} dominó el campo de batalla.<br><span style="color:var(--green2);font-family:'Cinzel',serif">${deltaStr} · ${league.emoji} ${league.name}</span>`
+      :`El rival destruyó tu ejército.<br><span style="color:var(--red2);font-family:'Cinzel',serif">${deltaStr} · ${league.emoji} ${league.name}</span>`);
   document.getElementById('win-overlay').classList.add('show');
 }
 
@@ -1402,11 +1858,25 @@ function cleanup(){
 }
 
 // Expose to inline onclick
-window.goHome=goHome; window.quickPlay=quickPlay; window.rollMyDice=rollMyDice; window.goConfig=goConfig; window.showRules=showRules;
+window.goHome=goHome; window.quickPlay=quickPlay; window.rollMyDice=rollMyDice;
+window.goConfig=goConfig; window.showRules=showRules;
 window.connectFirebase=connectFirebase; window.cancelMatch=cancelMatch;
 window.confirmFaction=confirmFaction; window.clearPlacement=clearPlacement;
 window.readyPlacement=readyPlacement; window.switchBoard=switchBoard;
 window.selectFactionCard=selectFactionCard;
+window.loginGoogle=loginGoogle; window.saveUsername=saveUsername;
+window.doSignOut=doSignOut; window.renderRanking=renderRanking;
+
+// ── AUTO INIT: Load Firebase + Auth on page load ──
+(async()=>{
+  try{
+    await loadFirebase(DEFAULT_CONFIG);
+    await initAuth();
+  }catch(e){
+    console.error('Firebase init error:',e);
+    document.getElementById('login-error').textContent='Error de conexión: '+e.message;
+  }
+})();
 </script>
 </body>
 </html>
