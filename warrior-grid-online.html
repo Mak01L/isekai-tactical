@@ -1517,6 +1517,7 @@ async function resolveDice(p1val, p2val){
   const msg = document.getElementById('dice-winner-msg');
   const isP1 = G.playerId==='p1';
   let firstTurn;
+
   if(p1val > p2val){
     firstTurn = 'p1';
     msg.textContent = isP1 ? '¡Ganaste la iniciativa! Atacas primero.' : 'El rival ganó la iniciativa. Ataca primero.';
@@ -1526,16 +1527,35 @@ async function resolveDice(p1val, p2val){
     msg.textContent = isP1 ? 'El rival ganó la iniciativa. Ataca primero.' : '¡Ganaste la iniciativa! Atacas primero.';
     msg.className = 'dice-winner-msg'+(isP1?' lose':'');
   } else {
-    // Draw — reroll
+    // Draw — delete node entirely and restart dice phase
     msg.textContent = '¡Empate! Tirando de nuevo...';
     msg.className = 'dice-winner-msg draw';
+
     setTimeout(async()=>{
-      await update(ref(db,'games/'+G.gameId+'/dice'), {p1:null, p2:null});
+      // Delete the dice node completely so Firebase triggers the listener again
+      await remove(ref(db,'games/'+G.gameId+'/dice'));
+
+      // Reset UI
       document.getElementById('dice-num-p1').className='dice-result-num hidden';
       document.getElementById('dice-num-p2').className='dice-result-num hidden';
+      document.getElementById('dice-num-p1').textContent='—';
+      document.getElementById('dice-num-p2').textContent='—';
       document.getElementById('dice-roll-btn').disabled=false;
       document.getElementById('dice-roll-btn').textContent='🎲 Tirar de Nuevo';
       msg.textContent='';
+
+      // Re-subscribe listener for new roll
+      const unsub2 = onValue(ref(db,'games/'+G.gameId+'/dice'), snap=>{
+        const d=snap.val();
+        if(!d) return;
+        if(d.p1!==undefined) showDiceResult('p1',d.p1);
+        if(d.p2!==undefined) showDiceResult('p2',d.p2);
+        if(d.p1!==undefined && d.p2!==undefined){
+          unsub2();
+          setTimeout(()=>resolveDice(d.p1,d.p2), 600);
+        }
+      });
+      G.listeners.push(unsub2);
     }, 1800);
     return;
   }
