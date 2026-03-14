@@ -1155,15 +1155,28 @@ let G = {
 // ══════════════════════════════════════════════════════════
 // SCREEN MANAGER
 // ══════════════════════════════════════════════════════════
+// Screens that get menu ambient
+const MENU_SCREENS = ['home','profile','ranking','login','username'];
+const BATTLE_SCREENS = ['battle','faction','place','match'];
+
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   const el=document.getElementById('screen-'+id);
   if(!el){ console.warn('screen not found: screen-'+id); return; }
   el.classList.add('active');
+
+  // Audio routing — switch between menu and battle ambient
+  if(MENU_SCREENS.includes(id)){
+    stopAmbient();
+    startMenuAmbient();
+  } else if(BATTLE_SCREENS.includes(id)){
+    stopMenuAmbient();
+    // Battle ambient started separately in startBattle()
+  }
+
   if(id==='profile'){
     if(myProfile) renderProfile();
     else{
-      // Profile not loaded yet — wait and retry
       const tryRender=setInterval(()=>{
         if(myProfile){ clearInterval(tryRender); renderProfile(); }
       },100);
@@ -2041,6 +2054,7 @@ function cleanup(){
   }
   G.gameId=null; G.gameRef=null; G.playerId=null;
   stopAmbient();
+  stopMenuAmbient();
   updateChatBtn(false);
   if(chatUnsub){ try{chatUnsub();}catch(e){} chatUnsub=null; }
 }
@@ -2063,8 +2077,16 @@ function getAudioCtx(){
 function toggleAudio(){
   audioEnabled = !audioEnabled;
   document.getElementById('audio-btn').textContent = audioEnabled ? '🔊' : '🔇';
-  if(!audioEnabled) stopAmbient();
-  else startAmbient();
+  if(!audioEnabled){
+    stopAmbient();
+    stopMenuAmbient();
+  } else {
+    // Re-start whichever ambient is appropriate
+    const active = document.querySelector('.screen.active');
+    const id = active?.id?.replace('screen-','');
+    if(id && MENU_SCREENS.includes(id)) startMenuAmbient();
+    else if(id === 'battle') startAmbient();
+  }
 }
 
 // ── White noise buffer helper ──
@@ -2154,6 +2176,89 @@ function stopAmbient(){
   if(ambientTimeout){ clearTimeout(ambientTimeout); ambientTimeout=null; }
   ambientNodes.forEach(n=>{ try{ if(n.stop)n.stop(); n.disconnect(); }catch(e){} });
   ambientNodes=[];
+}
+
+// ── Menu ambient — slow peaceful harp-like arpeggios ──
+let menuAmbientRunning = false;
+let menuAmbientNodes = [];
+let menuAmbientTimeout = null;
+
+// Pentatonic scale — peaceful, timeless feel
+const MENU_NOTES = [220, 261.6, 329.6, 392, 440, 523.3, 659.3, 784, 659.3, 523.3, 440, 392, 329.6, 261.6];
+const MENU_DURS  = [0.7, 0.5,   0.5,   0.7, 0.5, 0.7,   0.5,   1.0, 0.5,   0.5,   0.7, 0.5, 0.7,   1.2  ];
+
+function startMenuAmbient(){
+  if(!audioEnabled || menuAmbientRunning) return;
+  menuAmbientRunning = true;
+  const ctx = getAudioCtx();
+
+  // Very soft bass pad
+  const bass = ctx.createOscillator();
+  const bassG = ctx.createGain();
+  bass.type = 'sine';
+  bass.frequency.value = 55; // A1
+  bassG.gain.value = 0.03;
+  bass.connect(bassG); bassG.connect(ctx.destination);
+  bass.start();
+
+  // Warm mid pad — slow attack
+  const pad = ctx.createOscillator();
+  const padG = ctx.createGain();
+  pad.type = 'sine';
+  pad.frequency.value = 110;
+  padG.gain.setValueAtTime(0, ctx.currentTime);
+  padG.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 3);
+  pad.connect(padG); padG.connect(ctx.destination);
+  pad.start();
+
+  // Soft fifth
+  const fifth = ctx.createOscillator();
+  const fifthG = ctx.createGain();
+  fifth.type = 'sine';
+  fifth.frequency.value = 164.8;
+  fifthG.gain.value = 0.015;
+  fifth.connect(fifthG); fifthG.connect(ctx.destination);
+  fifth.start();
+
+  menuAmbientNodes = [bass, bassG, pad, padG, fifth, fifthG];
+
+  // Schedule harp arpeggios
+  scheduleMenuMelody(ctx, ctx.currentTime + 0.8);
+}
+
+function scheduleMenuMelody(ctx, startTime){
+  if(!menuAmbientRunning || !audioEnabled) return;
+  let t = startTime;
+  MENU_NOTES.forEach((freq, i)=>{
+    const dur = MENU_DURS[i];
+    // Harp pluck: fast attack, long decay, no sustain
+    const osc  = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const g    = ctx.createGain();
+    osc.type  = 'sine';  osc.frequency.value  = freq;
+    osc2.type = 'sine';  osc2.frequency.value = freq * 3; // 3rd harmonic softly
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.055, t + 0.015); // fast pluck
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur * 1.4); // long ring
+    osc.connect(g); osc2.connect(g); g.connect(ctx.destination);
+    osc.start(t);  osc.stop(t + dur * 1.5);
+    osc2.start(t); osc2.stop(t + dur * 0.5);
+    t += dur;
+  });
+
+  const totalDur = MENU_DURS.reduce((a,b)=>a+b, 0);
+  const pause = (totalDur + 2.5) * 1000;
+  menuAmbientTimeout = setTimeout(()=>{
+    if(menuAmbientRunning && audioEnabled)
+      scheduleMenuMelody(getAudioCtx(), getAudioCtx().currentTime + 0.1);
+  }, pause);
+}
+
+function stopMenuAmbient(){
+  menuAmbientRunning = false;
+  if(menuAmbientTimeout){ clearTimeout(menuAmbientTimeout); menuAmbientTimeout=null; }
+  menuAmbientNodes.forEach(n=>{ try{ if(n.stop)n.stop(); n.disconnect(); }catch(e){} });
+  menuAmbientNodes = [];
 }
 
 // ── Sound effects with noise buffers ──
