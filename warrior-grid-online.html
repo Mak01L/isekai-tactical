@@ -3,7 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Isekai Tactical</title>
+<title>Isekai Tactical — Batalla de Facciones Online</title>
+
+<!-- ── SEO ── -->
+<meta name="description" content="Isekai Tactical es un juego de estrategia por turnos online. Elige tu facción, despliega tus guerreros y destruye al enemigo en este juego de batalla medieval.">
+<meta name="keywords" content="isekai tactical, juego estrategia, batalla medieval, juego online, facciones, guerreros, turno por turno">
+<meta name="author" content="Isekai Tactical">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://mak01l.github.io/isekai-tactical/warrior-grid-online.html">
+
+<!-- ── Open Graph (WhatsApp, Facebook, Discord) ── -->
+<meta property="og:title" content="Isekai Tactical — Batalla de Facciones Online">
+<meta property="og:description" content="Elige tu facción, despliega tus guerreros y destruye al enemigo. Juego de estrategia medieval online gratuito.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mak01l.github.io/isekai-tactical/warrior-grid-online.html">
+<meta property="og:image" content="https://mak01l.github.io/isekai-tactical/icon-512.png">
+<meta property="og:locale" content="es_ES">
+
+<!-- ── Twitter Card ── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Isekai Tactical — Batalla de Facciones Online">
+<meta name="twitter:description" content="Juego de estrategia medieval online. Elige tu facción y destruye al enemigo.">
+<meta name="twitter:image" content="https://mak01l.github.io/isekai-tactical/icon-512.png">
+
+<!-- ── PWA ── -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#05040a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Isekai Tactical">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+<!-- ── Structured Data for Google ── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "Isekai Tactical",
+  "description": "Juego de estrategia por turnos online con facciones medievales. Elige tus guerreros, despliega tu ejército y destruye al rival.",
+  "genre": ["Strategy", "Turn-based", "Medieval"],
+  "playMode": "MultiPlayer",
+  "applicationCategory": "Game",
+  "operatingSystem": "Any",
+  "url": "https://mak01l.github.io/isekai-tactical/warrior-grid-online.html",
+  "inLanguage": "es",
+  "isAccessibleForFree": true
+}
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -2313,6 +2362,15 @@ window.toggleChat=toggleChat; window.sendChat=sendChat;
     document.getElementById('login-error').textContent='Error de conexión: '+e.message;
   }
 })();
+
+// ── Register Service Worker for PWA ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(()=>console.log('SW registered'))
+      .catch(e=>console.warn('SW error:',e));
+  });
+}
 </script>
 </body>
 </html>
