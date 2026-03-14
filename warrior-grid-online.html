@@ -828,8 +828,73 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 <script>
 // Pre-module stubs — called before module loads
+// These run synchronously so onclick handlers always find them
 window.toggleLangSelector = function(){ window.__pendingLang=true; };
 window.setLang = function(l){ window.__pendingSetLang=l; };
+window.loginGoogle = function(){
+  // Queue login until module is ready
+  if(window.__moduleReady){ window.__realLoginGoogle(); return; }
+  window.__pendingLogin=true;
+};
+window.saveUsername = function(){
+  if(window.__moduleReady){ window.__realSaveUsername(); return; }
+  window.__pendingSaveUsername=true;
+};
+window.quickPlay = function(){
+  if(window.__moduleReady){ window.__realQuickPlay(); return; }
+  window.__pendingQuickPlay=true;
+};
+window.showRules = function(){
+  if(window.__moduleReady){ window.__realShowRules(); return; }
+};
+window.showScreen = function(id){
+  if(window.__moduleReady){ window.__realShowScreen(id); return; }
+};
+window.doSignOut = function(){
+  if(window.__moduleReady) window.__realDoSignOut();
+};
+window.confirmFaction = function(){
+  if(window.__moduleReady) window.__realConfirmFaction();
+};
+window.clearPlacement = function(){
+  if(window.__moduleReady) window.__realClearPlacement();
+};
+window.readyPlacement = function(){
+  if(window.__moduleReady) window.__realReadyPlacement();
+};
+window.switchBoard = function(w){
+  if(window.__moduleReady) window.__realSwitchBoard(w);
+};
+window.rollMyDice = function(){
+  if(window.__moduleReady) window.__realRollMyDice();
+};
+window.toggleAudio = function(){
+  if(window.__moduleReady) window.__realToggleAudio();
+};
+window.toggleChat = function(){
+  if(window.__moduleReady) window.__realToggleChat();
+};
+window.sendChat = function(){
+  if(window.__moduleReady) window.__realSendChat();
+};
+window.selectFactionCard = function(id){
+  if(window.__moduleReady) window.__realSelectFactionCard(id);
+};
+window.cancelMatch = function(){
+  if(window.__moduleReady) window.__realCancelMatch();
+};
+window.renderRanking = function(){
+  if(window.__moduleReady) window.__realRenderRanking();
+};
+window.goHome = function(){
+  if(window.__moduleReady) window.__realGoHome();
+};
+window.connectFirebase = function(){
+  if(window.__moduleReady) window.__realConnectFirebase();
+};
+window.goConfig = function(){
+  if(window.__moduleReady) window.__realGoConfig();
+};
 </script>
 <script type="module">
 // ══════════════════════════════════════════════════════════
@@ -3030,10 +3095,46 @@ window.selectFactionCard=selectFactionCard;
 window.loginGoogle=loginGoogle; window.saveUsername=saveUsername;
 window.doSignOut=doSignOut; window.renderRanking=renderRanking;
 window.showScreen=showScreen; window.toggleAudio=toggleAudio;
-// Overwrite stubs with real functions
-window.toggleLangSelector = toggleLangSelector;
-window.setLang = setLang;
-// Flush any pending calls from before module loaded
+// Register ALL real functions and mark module as ready
+window.__moduleReady = true;
+window.__realLoginGoogle     = loginGoogle;
+window.__realSaveUsername    = saveUsername;
+window.__realQuickPlay       = quickPlay;
+window.__realShowRules       = showRules;
+window.__realShowScreen      = showScreen;
+window.__realDoSignOut       = doSignOut;
+window.__realConfirmFaction  = confirmFaction;
+window.__realClearPlacement  = clearPlacement;
+window.__realReadyPlacement  = readyPlacement;
+window.__realSwitchBoard     = switchBoard;
+window.__realRollMyDice      = rollMyDice;
+window.__realToggleAudio     = toggleAudio;
+window.__realToggleChat      = toggleChat;
+window.__realSendChat        = sendChat;
+window.__realSelectFactionCard = selectFactionCard;
+window.__realCancelMatch     = cancelMatch;
+window.__realRenderRanking   = renderRanking;
+window.__realGoHome          = goHome;
+window.__realConnectFirebase = connectFirebase;
+window.__realGoConfig        = goConfig;
+window.__toggleLangReal      = toggleLangSelector;
+window.__setLangReal         = setLang;
+// Overwrite stubs with direct references
+window.loginGoogle=loginGoogle; window.saveUsername=saveUsername;
+window.quickPlay=quickPlay; window.showRules=showRules;
+window.showScreen=showScreen; window.doSignOut=doSignOut;
+window.confirmFaction=confirmFaction; window.clearPlacement=clearPlacement;
+window.readyPlacement=readyPlacement; window.switchBoard=switchBoard;
+window.rollMyDice=rollMyDice; window.toggleAudio=toggleAudio;
+window.toggleChat=toggleChat; window.sendChat=sendChat;
+window.selectFactionCard=selectFactionCard; window.cancelMatch=cancelMatch;
+window.renderRanking=renderRanking; window.goHome=goHome;
+window.connectFirebase=connectFirebase; window.goConfig=goConfig;
+window.toggleLangSelector=toggleLangSelector; window.setLang=setLang;
+// Flush pending calls
+if(window.__pendingLogin){ loginGoogle(); window.__pendingLogin=false; }
+if(window.__pendingSaveUsername){ saveUsername(); window.__pendingSaveUsername=false; }
+if(window.__pendingQuickPlay){ quickPlay(); window.__pendingQuickPlay=false; }
 if(window.__pendingLang){ toggleLangSelector(); window.__pendingLang=false; }
 if(window.__pendingSetLang){ setLang(window.__pendingSetLang); window.__pendingSetLang=null; }
 window.toggleChat=toggleChat; window.sendChat=sendChat;
