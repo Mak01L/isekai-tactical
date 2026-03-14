@@ -616,7 +616,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </div>
 
 <!-- ══ LANGUAGE SELECTOR ══ -->
-<button id="lang-btn" onclick="if(window.toggleLangSelector)toggleLangSelector();else if(window._langToggle)_langToggle()">
+<button id="lang-btn" onclick="window.toggleLangSelector&&window.toggleLangSelector()">
   <span id="lang-current">🇪🇸 Español</span>
 </button>
 <div id="lang-selector"></div>
@@ -826,6 +826,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <button class="btn primary" style="margin-top:16px;min-width:200px" onclick="location.reload()">⚔ Nueva Partida</button>
 </div>
 
+<script>
+// Pre-module stubs — called before module loads
+window.toggleLangSelector = function(){ window.__pendingLang=true; };
+window.setLang = function(l){ window.__pendingSetLang=l; };
+</script>
 <script type="module">
 // ══════════════════════════════════════════════════════════
 // FIREBASE DYNAMIC IMPORT
@@ -1637,10 +1642,14 @@ async function loginGoogle(){
   const errEl = document.getElementById('login-error');
   errEl.textContent = '';
   try{
+    // Guard: ensure Firebase Auth is loaded before calling
+    if(typeof signInWithPopup !== 'function' || !googleProvider){
+      errEl.textContent = 'Conectando...';
+      await loadFirebase(DEFAULT_CONFIG);
+    }
     await signInWithPopup(googleProvider);
-    // onAuthStateChanged handles the rest
   } catch(e){
-    errEl.textContent = 'Error al iniciar sesión: '+e.message;
+    errEl.textContent = t('login_error')+': '+e.message;
   }
 }
 
@@ -3021,17 +3030,12 @@ window.selectFactionCard=selectFactionCard;
 window.loginGoogle=loginGoogle; window.saveUsername=saveUsername;
 window.doSignOut=doSignOut; window.renderRanking=renderRanking;
 window.showScreen=showScreen; window.toggleAudio=toggleAudio;
-// Register real implementations and flush any pending calls
-window.__toggleLangReal = toggleLangSelector;
-window.__setLangReal = setLang;
-window.__langReady = true;
+// Overwrite stubs with real functions
 window.toggleLangSelector = toggleLangSelector;
 window.setLang = setLang;
-window._langToggle = toggleLangSelector;
-window._setLang = setLang;
-// Flush pending calls
-if(window.__langPending){ toggleLangSelector(); window.__langPending=false; }
-if(window.__langPendingLang){ setLang(window.__langPendingLang); window.__langPendingLang=null; }
+// Flush any pending calls from before module loaded
+if(window.__pendingLang){ toggleLangSelector(); window.__pendingLang=false; }
+if(window.__pendingSetLang){ setLang(window.__pendingSetLang); window.__pendingSetLang=null; }
 window.toggleChat=toggleChat; window.sendChat=sendChat;
 
 // ── AUTO INIT: Load Firebase + Auth on page load ──
@@ -3058,18 +3062,6 @@ if('serviceWorker' in navigator){
       .catch(e=>console.warn('SW error:',e));
   });
 }
-</script>
-<script>
-// Stub for lang selector — safe to call before module loads
-window.toggleLangSelector=function(){
-  if(window.__langReady) return window.__toggleLangReal();
-  // Queue it — module not ready yet, will run once loaded
-  window.__langPending=true;
-};
-window.setLang=function(l){
-  if(window.__langReady) return window.__setLangReal(l);
-  window.__langPendingLang=l;
-};
 </script>
 </body>
 </html>
