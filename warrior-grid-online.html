@@ -429,6 +429,25 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   color:var(--gold);cursor:pointer;font-size:16px;touch-action:manipulation;}
 .chat-send:active{background:rgba(212,168,67,.1);}
 
+/* ══ LANGUAGE SELECTOR ══ */
+#lang-btn{position:fixed;top:12px;left:12px;z-index:75;
+  height:36px;padding:0 10px;border-radius:18px;border:1px solid var(--border2);
+  background:rgba(5,4,10,.85);color:var(--text2);font-size:13px;
+  cursor:pointer;display:flex;align-items:center;gap:5px;
+  touch-action:manipulation;transition:all .2s;font-family:'Cinzel',serif;}
+#lang-btn:active{border-color:var(--gold);color:var(--gold);}
+#lang-selector{position:fixed;top:52px;left:12px;z-index:75;
+  background:rgba(8,6,18,.97);border:1px solid var(--border2);border-radius:8px;
+  overflow:hidden;display:none;flex-direction:column;min-width:160px;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);}
+#lang-selector.show{display:flex;}
+.lang-option{padding:9px 14px;font-family:'Cinzel',serif;font-size:.72rem;
+  color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--border);transition:background .15s;}
+.lang-option:last-child{border-bottom:none;}
+.lang-option:active,.lang-option.active{background:rgba(212,168,67,.1);color:var(--gold2);}
+#lang-current{font-size:13px;}
+
 /* ══ AUDIO BUTTON ══ */
 #audio-btn{position:fixed;top:12px;right:12px;z-index:75;
   width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);
@@ -596,6 +615,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="log-mini" id="battle-log"></div>
 </div>
 
+<!-- ══ LANGUAGE SELECTOR ══ -->
+<button id="lang-btn" onclick="if(window.toggleLangSelector)toggleLangSelector();else if(window._langToggle)_langToggle()">
+  <span id="lang-current">🇪🇸 Español</span>
+</button>
+<div id="lang-selector"></div>
+
 <!-- ══ AUDIO BUTTON ══ -->
 <button id="audio-btn" onclick="toggleAudio()" title="Sonido">🔊</button>
 
@@ -627,10 +652,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <div class="login-content">
     <div class="login-emblem">⚔</div>
-    <div class="login-title">Isekai Tactical</div>
-    <div class="login-sub">Batalla de Facciones Online</div>
+    <div class="login-title" id="login-title-el">Isekai Tactical</div>
+    <div class="login-sub" id="login-sub-el">Batalla de Facciones Online</div>
     <div class="login-divider"></div>
-    <div class="login-desc">Inicia sesión para guardar tu progreso, subir en el ranking y desafiar rivales de tu nivel.</div>
+    <div class="login-desc" id="login-desc-el">Inicia sesión para guardar tu progreso, subir en el ranking y desafiar rivales de tu nivel.</div>
     <button class="btn-google" onclick="loginGoogle()">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -638,7 +663,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
       </svg>
-      Continuar con Google
+      <span id="login-btn-el">Continuar con Google</span>
     </button>
     <div class="login-error" id="login-error"></div>
   </div>
@@ -649,13 +674,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="username-content">
     <div style="font-size:48px;animation:floatY 4s ease-in-out infinite">⚔</div>
     <div class="screen-header" style="margin-bottom:0">
-      <h1>Elige tu nombre</h1>
-      <div class="screen-sub">Tu identidad en el campo de batalla</div>
+      <h1 id="username-title-el">Elige tu nombre</h1>
+      <div class="screen-sub" id="username-sub-el">Tu identidad en el campo de batalla</div>
     </div>
     <input class="username-input" id="username-input" maxlength="16" placeholder="Nombre de guerrero..." autocomplete="off" spellcheck="false">
-    <div class="username-hint">Entre 3 y 16 caracteres. Sin espacios.</div>
+    <div class="username-hint" id="username-hint-el">Entre 3 y 16 caracteres. Sin espacios.</div>
     <div class="username-error" id="username-error"></div>
-    <button class="btn primary big" onclick="saveUsername()">Entrar al Campo de Batalla →</button>
+    <button class="btn primary big" onclick="saveUsername()" id="username-btn-el">Entrar al Campo de Batalla →</button>
   </div>
 </div>
 
@@ -676,20 +701,20 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="home-corner tl" id="home-league-corner">⚔</div>
   <div class="home-corner tr" id="home-elo-corner">0 ELO</div>
   <div class="home-corner bl" id="home-user-corner">—</div>
-  <div class="home-corner br" onclick="showScreen('ranking')" style="cursor:pointer">🏆 Ranking</div>
+  <div class="home-corner br" onclick="showScreen('ranking')" style="cursor:pointer" id="home-corner-br-el">🏆 Ranking</div>
   <div class="home-content">
     <div class="home-emblem">⚔</div>
     <div class="home-title">Isekai<br>Tactical</div>
     <div class="home-subtitle">Batalla de Facciones Online</div>
     <div class="home-divider"></div>
-    <div class="home-tagline">Elige tu facción. Despliega tu ejército.<br>Destruye al enemigo.</div>
+    <div class="home-tagline" id="home-tagline-el">Elige tu facción. Despliega tu ejército.<br>Destruye al enemigo.</div>
     <div class="home-actions" style="margin-top:8px;">
-      <button class="btn primary big" onclick="quickPlay()">⚔ Buscar Partida</button>
-      <button class="btn big" onclick="showScreen('profile')">👤 Mi Perfil</button>
-      <button class="btn big" onclick="showRules()">📜 Reglas</button>
+      <button class="btn primary big" onclick="quickPlay()" id="btn-play-el">⚔ Buscar Partida</button>
+      <button class="btn big" onclick="showScreen('profile')" id="btn-profile-el">👤 Mi Perfil</button>
+      <button class="btn big" onclick="showRules()" id="btn-rules-el">📜 Reglas</button>
     </div>
     <div id="rules-box" style="display:none;max-width:360px;margin-top:8px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 18px;font-size:.82rem;line-height:1.8;color:var(--text2);">
-      <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold2);letter-spacing:.15em;margin-bottom:10px;">— REGLAS DE COMBATE —</div>
+      <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold2);letter-spacing:.15em;margin-bottom:10px;" id="rules-title-el">— REGLAS DE COMBATE —</div>
       • Elige tu facción (5 disponibles, 8 guerreros cada una).<br>
       • Coloca tus 8 guerreros — <strong style="color:var(--text)">1 guerrero = 1 celda</strong>.<br>
       • Por turno: elige un guerrero y ataca una coordenada enemiga.<br>
@@ -704,7 +729,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 <!-- ══ SCREEN: PROFILE ══ -->
 <div id="screen-profile" class="screen">
-  <div class="screen-header"><h1>Mi Perfil</h1></div>
+  <div class="screen-header"><h1 id="profile-title-el">Mi Perfil</h1></div>
   <div class="profile-header" id="profile-header">
     <div class="profile-avatar-placeholder" id="profile-avatar">⚔</div>
     <div class="profile-info">
@@ -731,26 +756,26 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div id="profile-history-list"></div>
   </div>
   <div class="profile-actions">
-    <button class="btn" style="flex:1" onclick="showScreen('home')">← Volver</button>
-    <button class="btn danger" style="flex:1" onclick="doSignOut()">Cerrar Sesión</button>
+    <button class="btn" id="profile-back-el" style="flex:1" onclick="showScreen('home')">← Volver</button>
+    <button class="btn danger" id="profile-logout-el" style="flex:1" onclick="doSignOut()">Cerrar Sesión</button>
   </div>
 </div>
 
 <!-- ══ SCREEN: RANKING ══ -->
 <div id="screen-ranking" class="screen">
-  <div class="screen-header"><h1>🏆 Ranking</h1><div class="screen-sub">Top Guerreros</div></div>
+  <div class="screen-header"><h1>🏆 Ranking</h1><div class="screen-sub" id="ranking-sub-el">Top Guerreros</div></div>
   <div class="ranking-list" id="ranking-list">
     <div style="text-align:center;color:var(--text2);font-style:italic;padding:20px;">Cargando ranking...</div>
   </div>
   <div style="margin-top:12px;width:100%;max-width:480px;">
-    <button class="btn" style="width:100%" onclick="showScreen('home')">← Volver</button>
+    <button class="btn" id="ranking-back-el" style="width:100%" onclick="showScreen('home')">← Volver</button>
   </div>
 </div>
 
 <!-- ══ DICE OVERLAY ══ -->
 <div id="dice-overlay">
-  <div class="dice-title">⚔ Iniciativa de Batalla</div>
-  <div class="dice-subtitle">El mayor resultado ataca primero</div>
+  <div class="dice-title" id="dice-title-el">⚔ Iniciativa de Batalla</div>
+  <div class="dice-subtitle" id="dice-sub-el">El mayor resultado ataca primero</div>
   <div class="dice-arena">
     <div class="dice-player">
       <div class="dice-player-name" id="dice-p1-name">Jugador 1</div>
@@ -826,6 +851,652 @@ async function loadFirebase(config) {
   signInWithPopup = (p) => fauth.signInWithPopup(auth, p);
   onAuthStateChanged = (cb) => fauth.onAuthStateChanged(auth, cb);
   signOut = () => fauth.signOut(auth);
+}
+
+// ══════════════════════════════════════════════════════════
+// i18n — MULTILANGUAGE SYSTEM
+// ══════════════════════════════════════════════════════════
+const LANGS = {
+  es: {
+    name:'Español', flag:'🇪🇸',
+    login_title:'Isekai Tactical',
+    login_sub:'Batalla de Facciones Online',
+    login_desc:'Inicia sesión para guardar tu progreso, subir en el ranking y desafiar rivales de tu nivel.',
+    login_btn:'Continuar con Google',
+    login_error:'Error al iniciar sesión',
+    username_title:'Elige tu nombre',
+    username_sub:'Tu identidad en el campo de batalla',
+    username_placeholder:'Nombre de guerrero...',
+    username_hint:'Entre 3 y 16 caracteres. Sin espacios.',
+    username_btn:'Entrar al Campo de Batalla →',
+    username_taken:'Ese nombre ya está en uso.',
+    username_invalid:'Entre 3 y 16 caracteres, sin espacios.',
+    home_tagline:'Elige tu facción. Despliega tu ejército.Destruye al enemigo.',
+    btn_play:'⚔ Buscar Partida',
+    btn_profile:'👤 Mi Perfil',
+    btn_rules:'📜 Reglas',
+    btn_ranking:'🏆 Ranking',
+    rules_title:'— REGLAS DE COMBATE —',
+    rules: `• Elige tu facción (5 disponibles, 8 guerreros cada una).
+• Coloca tus 8 guerreros — 1 guerrero = 1 celda.
+• Por turno: elige un guerrero y ataca una coordenada enemiga.
+• ATK > DEF → el defensor muere al instante.
+• ATK = DEF → ambos mueren.
+• ATK < DEF → el defensor resiste, turno perdido.
+• Celda vacía → turno perdido.
+• Gana quien elimine todos los guerreros rivales.`,
+    match_connecting:'Conectando...',
+    match_searching:'Buscando rival de tu nivel...',
+    match_found:'¡Rival encontrado!',
+    match_waiting:'Sala creada — esperando rival...',
+    match_share:'Comparte el juego con un amigo para que se una',
+    match_cancel:'Cancelar',
+    faction_title:'Elige tu Facción',
+    faction_sub:'Selecciona tu ejército',
+    faction_confirm:'Confirmar ✓',
+    faction_waiting_title:'Esperando al rival...',
+    place_phase:'Colocación',
+    place_hint:'Selecciona un guerrero y toca una celda',
+    place_hint_sel:'Toca una celda para colocar',
+    place_clear:'Limpiar',
+    place_ready:'Listo — Confirmar ✓',
+    place_waiting:'Esperando al rival...',
+    place_waiting_sub:'El rival está colocando sus guerreros',
+    board_mine:'Tu Territorio',
+    board_attack:'Ataque',
+    turn_mine:'⚔ Tu turno',
+    turn_rival:'⏳ Turno del rival',
+    turn_label:'Turno',
+    profile_title:'Mi Perfil',
+    profile_elo:'ELO',
+    profile_wins:'Victorias',
+    profile_losses:'Derrotas',
+    profile_history:'Últimas partidas',
+    profile_no_games:'Sin partidas aún.',
+    profile_back:'← Volver',
+    profile_logout:'Cerrar Sesión',
+    ranking_title:'🏆 Ranking',
+    ranking_sub:'Top Guerreros',
+    ranking_loading:'Cargando ranking...',
+    ranking_empty:'Sin datos aún.',
+    ranking_back:'← Volver',
+    dice_title:'⚔ Iniciativa de Batalla',
+    dice_sub:'El mayor resultado ataca primero',
+    dice_roll:'🎲 Tirar Dado',
+    dice_rolling:'⏳ Tirando...',
+    dice_reroll:'🎲 Tirar de Nuevo',
+    dice_draw:'¡Empate! Tirando de nuevo...',
+    dice_win_me:'¡Ganaste la iniciativa! Atacas primero.',
+    dice_win_rival:'El rival ganó la iniciativa. Ataca primero.',
+    wait_text:'Esperando al rival...',
+    win_victory:'¡Victoria!',
+    win_defeat:'Derrota',
+    win_draw:'¡Empate épico!',
+    win_draw_sub:'Ambos ejércitos se aniquilaron.',
+    win_sub_win:'ha dominado el campo de batalla.',
+    win_sub_lose:'El rival destruyó tu ejército.',
+    win_new:'⚔ Nueva Partida',
+    chat_title:'⚔ Chat de Batalla',
+    chat_placeholder:'Mensaje...',
+    log_start:'La batalla comienza...',
+    log_kill:'eliminó a',
+    log_damage:'dañó a',
+    log_hp:'HP',
+    log_empty:'Vacío — turno perdido',
+    config_title:'⚙ Configuración',
+    config_sub:'Conecta tu Firebase',
+    config_connect:'Conectar y Buscar Partida →',
+    config_back:'← Volver',
+    loading:'Cargando perfil...',
+  },
+  en: {
+    name:'English', flag:'🇬🇧',
+    login_title:'Isekai Tactical',
+    login_sub:'Online Faction Battle',
+    login_desc:'Sign in to save your progress, climb the rankings and challenge rivals at your level.',
+    login_btn:'Continue with Google',
+    login_error:'Sign in error',
+    username_title:'Choose your name',
+    username_sub:'Your identity on the battlefield',
+    username_placeholder:'Warrior name...',
+    username_hint:'Between 3 and 16 characters. No spaces.',
+    username_btn:'Enter the Battlefield →',
+    username_taken:'That name is already taken.',
+    username_invalid:'Between 3 and 16 characters, no spaces.',
+    home_tagline:'Choose your faction. Deploy your army.Destroy the enemy.',
+    btn_play:'⚔ Find Match',
+    btn_profile:'👤 My Profile',
+    btn_rules:'📜 Rules',
+    btn_ranking:'🏆 Ranking',
+    rules_title:'— COMBAT RULES —',
+    rules:`• Choose your faction (5 available, 8 warriors each).
+• Place your 8 warriors — 1 warrior = 1 cell.
+• Each turn: choose a warrior and attack an enemy coordinate.
+• ATK > DEF → defender dies instantly.
+• ATK = DEF → both die.
+• ATK < DEF → defender resists, turn lost.
+• Empty cell → turn lost.
+• Win by eliminating all enemy warriors.`,
+    match_connecting:'Connecting...',
+    match_searching:'Searching for a rival at your level...',
+    match_found:'Rival found!',
+    match_waiting:'Room created — waiting for rival...',
+    match_share:'Share the game with a friend to join',
+    match_cancel:'Cancel',
+    faction_title:'Choose your Faction',
+    faction_sub:'Select your army',
+    faction_confirm:'Confirm ✓',
+    faction_waiting_title:'Waiting for rival...',
+    place_phase:'Placement',
+    place_hint:'Select a warrior and tap a cell',
+    place_hint_sel:'Tap a cell to place',
+    place_clear:'Clear',
+    place_ready:'Ready — Confirm ✓',
+    place_waiting:'Waiting for rival...',
+    place_waiting_sub:'Rival is placing their warriors',
+    board_mine:'Your Territory',
+    board_attack:'Attack',
+    turn_mine:'⚔ Your turn',
+    turn_rival:"⏳ Rival's turn",
+    turn_label:'Turn',
+    profile_title:'My Profile',
+    profile_elo:'ELO',
+    profile_wins:'Wins',
+    profile_losses:'Losses',
+    profile_history:'Recent matches',
+    profile_no_games:'No matches yet.',
+    profile_back:'← Back',
+    profile_logout:'Sign Out',
+    ranking_title:'🏆 Ranking',
+    ranking_sub:'Top Warriors',
+    ranking_loading:'Loading ranking...',
+    ranking_empty:'No data yet.',
+    ranking_back:'← Back',
+    dice_title:'⚔ Battle Initiative',
+    dice_sub:'Highest roll attacks first',
+    dice_roll:'🎲 Roll Dice',
+    dice_rolling:'⏳ Rolling...',
+    dice_reroll:'🎲 Roll Again',
+    dice_draw:'Tie! Rolling again...',
+    dice_win_me:'You won initiative! You attack first.',
+    dice_win_rival:'Rival won initiative. They attack first.',
+    wait_text:'Waiting for rival...',
+    win_victory:'Victory!',
+    win_defeat:'Defeat',
+    win_draw:'Epic Tie!',
+    win_draw_sub:'Both armies annihilated each other.',
+    win_sub_win:'has dominated the battlefield.',
+    win_sub_lose:'The rival destroyed your army.',
+    win_new:'⚔ New Match',
+    chat_title:'⚔ Battle Chat',
+    chat_placeholder:'Message...',
+    log_start:'The battle begins...',
+    log_kill:'eliminated',
+    log_damage:'damaged',
+    log_hp:'HP',
+    log_empty:'Empty — turn lost',
+    config_title:'⚙ Settings',
+    config_sub:'Connect your Firebase',
+    config_connect:'Connect and Find Match →',
+    config_back:'← Back',
+    loading:'Loading profile...',
+  },
+  pt: {
+    name:'Português', flag:'🇧🇷',
+    login_title:'Isekai Tactical',
+    login_sub:'Batalha de Facções Online',
+    login_desc:'Entre para salvar seu progresso, subir no ranking e desafiar rivais do seu nível.',
+    login_btn:'Continuar com Google',
+    login_error:'Erro ao entrar',
+    username_title:'Escolha seu nome',
+    username_sub:'Sua identidade no campo de batalha',
+    username_placeholder:'Nome de guerreiro...',
+    username_hint:'Entre 3 e 16 caracteres. Sem espaços.',
+    username_btn:'Entrar no Campo de Batalha →',
+    username_taken:'Esse nome já está em uso.',
+    username_invalid:'Entre 3 e 16 caracteres, sem espaços.',
+    home_tagline:'Escolha sua facção. Implante seu exército.Destrua o inimigo.',
+    btn_play:'⚔ Encontrar Partida',
+    btn_profile:'👤 Meu Perfil',
+    btn_rules:'📜 Regras',
+    btn_ranking:'🏆 Ranking',
+    rules_title:'— REGRAS DE COMBATE —',
+    rules:`• Escolha sua facção (5 disponíveis, 8 guerreiros cada).
+• Coloque seus 8 guerreiros — 1 guerreiro = 1 célula.
+• Por turno: escolha um guerreiro e ataque uma coordenada inimiga.
+• ATK > DEF → defensor morre instantaneamente.
+• ATK = DEF → ambos morrem.
+• ATK < DEF → defensor resiste, turno perdido.
+• Célula vazia → turno perdido.
+• Vence quem eliminar todos os guerreiros inimigos.`,
+    match_connecting:'Conectando...',
+    match_searching:'Procurando rival do seu nível...',
+    match_found:'Rival encontrado!',
+    match_waiting:'Sala criada — aguardando rival...',
+    match_share:'Compartilhe o jogo com um amigo',
+    match_cancel:'Cancelar',
+    faction_title:'Escolha sua Facção',
+    faction_sub:'Selecione seu exército',
+    faction_confirm:'Confirmar ✓',
+    faction_waiting_title:'Aguardando rival...',
+    place_phase:'Posicionamento',
+    place_hint:'Selecione um guerreiro e toque uma célula',
+    place_hint_sel:'Toque uma célula para posicionar',
+    place_clear:'Limpar',
+    place_ready:'Pronto — Confirmar ✓',
+    place_waiting:'Aguardando rival...',
+    place_waiting_sub:'O rival está posicionando seus guerreiros',
+    board_mine:'Seu Território',
+    board_attack:'Ataque',
+    turn_mine:'⚔ Seu turno',
+    turn_rival:'⏳ Turno do rival',
+    turn_label:'Turno',
+    profile_title:'Meu Perfil',
+    profile_elo:'ELO',
+    profile_wins:'Vitórias',
+    profile_losses:'Derrotas',
+    profile_history:'Últimas partidas',
+    profile_no_games:'Sem partidas ainda.',
+    profile_back:'← Voltar',
+    profile_logout:'Sair',
+    ranking_title:'🏆 Ranking',
+    ranking_sub:'Top Guerreiros',
+    ranking_loading:'Carregando ranking...',
+    ranking_empty:'Sem dados ainda.',
+    ranking_back:'← Voltar',
+    dice_title:'⚔ Iniciativa de Batalha',
+    dice_sub:'O maior resultado ataca primeiro',
+    dice_roll:'🎲 Rolar Dado',
+    dice_rolling:'⏳ Rolando...',
+    dice_reroll:'🎲 Rolar Novamente',
+    dice_draw:'Empate! Rolando novamente...',
+    dice_win_me:'Você ganhou a iniciativa! Ataque primeiro.',
+    dice_win_rival:'O rival ganhou a iniciativa. Ele ataca primeiro.',
+    wait_text:'Aguardando rival...',
+    win_victory:'Vitória!',
+    win_defeat:'Derrota',
+    win_draw:'Empate Épico!',
+    win_draw_sub:'Ambos os exércitos se aniquilaram.',
+    win_sub_win:'dominou o campo de batalha.',
+    win_sub_lose:'O rival destruiu seu exército.',
+    win_new:'⚔ Nova Partida',
+    chat_title:'⚔ Chat de Batalha',
+    chat_placeholder:'Mensagem...',
+    log_start:'A batalha começa...',
+    log_kill:'eliminou',
+    log_damage:'danificou',
+    log_hp:'HP',
+    log_empty:'Vazio — turno perdido',
+    config_title:'⚙ Configuração',
+    config_sub:'Conecte seu Firebase',
+    config_connect:'Conectar e Encontrar Partida →',
+    config_back:'← Voltar',
+    loading:'Carregando perfil...',
+  },
+  fr: {
+    name:'Français', flag:'🇫🇷',
+    login_title:'Isekai Tactical',
+    login_sub:'Bataille de Factions en Ligne',
+    login_desc:'Connectez-vous pour sauvegarder vos progrès, monter dans le classement et défier des rivaux de votre niveau.',
+    login_btn:'Continuer avec Google',
+    login_error:'Erreur de connexion',
+    username_title:'Choisissez votre nom',
+    username_sub:'Votre identité sur le champ de bataille',
+    username_placeholder:'Nom de guerrier...',
+    username_hint:'Entre 3 et 16 caractères. Sans espaces.',
+    username_btn:'Entrer sur le Champ de Bataille →',
+    username_taken:'Ce nom est déjà utilisé.',
+    username_invalid:'Entre 3 et 16 caractères, sans espaces.',
+    home_tagline:"Choisissez votre faction. Déployez votre armée. Détruisez l'ennemi.",
+    btn_play:'⚔ Trouver une Partie',
+    btn_profile:'👤 Mon Profil',
+    btn_rules:'📜 Règles',
+    btn_ranking:'🏆 Classement',
+    rules_title:'— RÈGLES DE COMBAT —',
+    rules:`• Choisissez votre faction (5 disponibles, 8 guerriers chacune).
+• Placez vos 8 guerriers — 1 guerrier = 1 case.
+• Par tour: choisissez un guerrier et attaquez une coordonnée ennemie.
+• ATK > DEF → le défenseur meurt instantanément.
+• ATK = DEF → les deux meurent.
+• ATK < DEF → le défenseur résiste, tour perdu.
+• Case vide → tour perdu.
+• Gagne celui qui élimine tous les guerriers ennemis.`,
+    match_connecting:'Connexion...',
+    match_searching:"Recherche d'un rival à votre niveau...",
+    match_found:'Rival trouvé!',
+    match_waiting:"Salle créée — en attente d'un rival...",
+    match_share:'Partagez le jeu avec un ami',
+    match_cancel:'Annuler',
+    faction_title:'Choisissez votre Faction',
+    faction_sub:'Sélectionnez votre armée',
+    faction_confirm:'Confirmer ✓',
+    faction_waiting_title:'En attente du rival...',
+    place_phase:'Placement',
+    place_hint:'Sélectionnez un guerrier et touchez une case',
+    place_hint_sel:'Touchez une case pour placer',
+    place_clear:'Effacer',
+    place_ready:'Prêt — Confirmer ✓',
+    place_waiting:'En attente du rival...',
+    place_waiting_sub:'Le rival place ses guerriers',
+    board_mine:'Votre Territoire',
+    board_attack:'Attaque',
+    turn_mine:'⚔ Votre tour',
+    turn_rival:'⏳ Tour du rival',
+    turn_label:'Tour',
+    profile_title:'Mon Profil',
+    profile_elo:'ELO',
+    profile_wins:'Victoires',
+    profile_losses:'Défaites',
+    profile_history:'Dernières parties',
+    profile_no_games:'Pas encore de parties.',
+    profile_back:'← Retour',
+    profile_logout:'Déconnexion',
+    ranking_title:'🏆 Classement',
+    ranking_sub:'Top Guerriers',
+    ranking_loading:'Chargement...',
+    ranking_empty:'Pas encore de données.',
+    ranking_back:'← Retour',
+    dice_title:'⚔ Initiative de Bataille',
+    dice_sub:'Le plus grand résultat attaque en premier',
+    dice_roll:'🎲 Lancer le Dé',
+    dice_rolling:'⏳ Lancement...',
+    dice_reroll:'🎲 Relancer',
+    dice_draw:'Égalité! On relance...',
+    dice_win_me:"Vous avez gagné l'initiative! Vous attaquez en premier.",
+    dice_win_rival:"Le rival a gagné l'initiative. Il attaque en premier.",
+    wait_text:'En attente du rival...',
+    win_victory:'Victoire!',
+    win_defeat:'Défaite',
+    win_draw:'Égalité Épique!',
+    win_draw_sub:'Les deux armées se sont anéanties.',
+    win_sub_win:'a dominé le champ de bataille.',
+    win_sub_lose:'Le rival a détruit votre armée.',
+    win_new:'⚔ Nouvelle Partie',
+    chat_title:'⚔ Chat de Bataille',
+    chat_placeholder:'Message...',
+    log_start:'La bataille commence...',
+    log_kill:'a éliminé',
+    log_damage:'a blessé',
+    log_hp:'PV',
+    log_empty:'Vide — tour perdu',
+    config_title:'⚙ Paramètres',
+    config_sub:'Connectez votre Firebase',
+    config_connect:'Connecter et Trouver une Partie →',
+    config_back:'← Retour',
+    loading:'Chargement du profil...',
+  },
+  it: {
+    name:'Italiano', flag:'🇮🇹',
+    login_title:'Isekai Tactical',login_sub:'Battaglia di Fazioni Online',
+    login_desc:'Accedi per salvare i tuoi progressi, salire nella classifica e sfidare rivali del tuo livello.',
+    login_btn:'Continua con Google',login_error:'Errore di accesso',
+    username_title:'Scegli il tuo nome',username_sub:'La tua identità sul campo di battaglia',
+    username_placeholder:'Nome guerriero...',username_hint:'Tra 3 e 16 caratteri. Senza spazi.',
+    username_btn:'Entra nel Campo di Battaglia →',username_taken:'Quel nome è già in uso.',
+    username_invalid:'Tra 3 e 16 caratteri, senza spazi.',
+    home_tagline:'Scegli la tua fazione. Schiera il tuo esercito.Distruggi il nemico.',
+    btn_play:'⚔ Trova Partita',btn_profile:'👤 Il Mio Profilo',btn_rules:'📜 Regole',btn_ranking:'🏆 Classifica',
+    rules_title:'— REGOLE DI COMBATTIMENTO —',
+    rules:`• Scegli la tua fazione (5 disponibili, 8 guerrieri ciascuna).
+• Posiziona i tuoi 8 guerrieri — 1 guerriero = 1 cella.
+• Per turno: scegli un guerriero e attacca una coordinata nemica.
+• ATK > DEF → il difensore muore istantaneamente.
+• ATK = DEF → entrambi muoiono.
+• ATK < DEF → il difensore resiste, turno perso.
+• Cella vuota → turno perso.
+• Vince chi elimina tutti i guerrieri nemici.`,
+    match_connecting:'Connessione...',match_searching:'Ricerca di un rivale al tuo livello...',
+    match_found:'Rivale trovato!',match_waiting:'Stanza creata — in attesa del rivale...',
+    match_share:'Condividi il gioco con un amico',match_cancel:'Annulla',
+    faction_title:'Scegli la tua Fazione',faction_sub:'Seleziona il tuo esercito',
+    faction_confirm:'Conferma ✓',faction_waiting_title:'In attesa del rivale...',
+    place_phase:'Posizionamento',place_hint:'Seleziona un guerriero e tocca una cella',
+    place_hint_sel:'Tocca una cella per posizionare',place_clear:'Cancella',
+    place_ready:'Pronto — Conferma ✓',place_waiting:'In attesa del rivale...',
+    place_waiting_sub:'Il rivale sta posizionando i suoi guerrieri',
+    board_mine:'Il Tuo Territorio',board_attack:'Attacco',
+    turn_mine:'⚔ Il tuo turno',turn_rival:'⏳ Turno del rivale',turn_label:'Turno',
+    profile_title:'Il Mio Profilo',profile_elo:'ELO',profile_wins:'Vittorie',profile_losses:'Sconfitte',
+    profile_history:'Ultime partite',profile_no_games:'Nessuna partita ancora.',
+    profile_back:'← Indietro',profile_logout:'Esci',
+    ranking_title:'🏆 Classifica',ranking_sub:'Top Guerrieri',ranking_loading:'Caricamento...',
+    ranking_empty:'Nessun dato ancora.',ranking_back:'← Indietro',
+    dice_title:'⚔ Iniziativa di Battaglia',dice_sub:'Il risultato maggiore attacca per primo',
+    dice_roll:'🎲 Lancia il Dado',dice_rolling:'⏳ Lancio...',dice_reroll:'🎲 Rilancia',
+    dice_draw:'Pareggio! Si rilancia...',
+    dice_win_me:"Hai vinto l'iniziativa! Attacchi per primo.",
+    dice_win_rival:"Il rivale ha vinto l'iniziativa. Attacca per primo.",
+    wait_text:'In attesa del rivale...',win_victory:'Vittoria!',win_defeat:'Sconfitta',
+    win_draw:'Pareggio Epico!',win_draw_sub:'Entrambi gli eserciti si sono annientati.',
+    win_sub_win:'ha dominato il campo di battaglia.',win_sub_lose:'Il rivale ha distrutto il tuo esercito.',
+    win_new:'⚔ Nuova Partita',chat_title:'⚔ Chat di Battaglia',chat_placeholder:'Messaggio...',
+    log_start:'La battaglia inizia...',log_kill:'ha eliminato',log_damage:'ha danneggiato',
+    log_hp:'PV',log_empty:'Vuoto — turno perso',
+    config_title:'⚙ Impostazioni',config_sub:'Connetti il tuo Firebase',
+    config_connect:'Connetti e Trova Partita →',config_back:'← Indietro',loading:'Caricamento profilo...',
+  },
+  de: {
+    name:'Deutsch', flag:'🇩🇪',
+    login_title:'Isekai Tactical',login_sub:'Online-Fraktionsschlacht',
+    login_desc:'Melde dich an, um deinen Fortschritt zu speichern, im Ranking aufzusteigen und Rivalen deines Niveaus herauszufordern.',
+    login_btn:'Mit Google fortfahren',login_error:'Anmeldefehler',
+    username_title:'Wähle deinen Namen',username_sub:'Deine Identität auf dem Schlachtfeld',
+    username_placeholder:'Kriegername...',username_hint:'Zwischen 3 und 16 Zeichen. Keine Leerzeichen.',
+    username_btn:'Betritt das Schlachtfeld →',username_taken:'Dieser Name ist bereits vergeben.',
+    username_invalid:'Zwischen 3 und 16 Zeichen, keine Leerzeichen.',
+    home_tagline:'Wähle deine Fraktion. Stell deine Armee auf.Vernichte den Feind.',
+    btn_play:'⚔ Spiel suchen',btn_profile:'👤 Mein Profil',btn_rules:'📜 Regeln',btn_ranking:'🏆 Rangliste',
+    rules_title:'— KAMPFREGELN —',
+    rules:`• Wähle deine Fraktion (5 verfügbar, je 8 Krieger).
+• Platziere deine 8 Krieger — 1 Krieger = 1 Feld.
+• Pro Runde: Wähle einen Krieger und greife eine feindliche Koordinate an.
+• ATK > DEF → Verteidiger stirbt sofort.
+• ATK = DEF → Beide sterben.
+• ATK < DEF → Verteidiger widersteht, Runde verloren.
+• Leeres Feld → Runde verloren.
+• Gewinner ist, wer alle feindlichen Krieger eliminiert.`,
+    match_connecting:'Verbinde...',match_searching:'Suche Rivalen deines Niveaus...',
+    match_found:'Rivale gefunden!',match_waiting:'Raum erstellt — warte auf Rivalen...',
+    match_share:'Teile das Spiel mit einem Freund',match_cancel:'Abbrechen',
+    faction_title:'Wähle deine Fraktion',faction_sub:'Wähle deine Armee',
+    faction_confirm:'Bestätigen ✓',faction_waiting_title:'Warte auf Rivalen...',
+    place_phase:'Aufstellung',place_hint:'Wähle einen Krieger und tippe auf ein Feld',
+    place_hint_sel:'Tippe auf ein Feld zum Platzieren',place_clear:'Leeren',
+    place_ready:'Bereit — Bestätigen ✓',place_waiting:'Warte auf Rivalen...',
+    place_waiting_sub:'Der Rivale stellt seine Krieger auf',
+    board_mine:'Dein Gebiet',board_attack:'Angriff',
+    turn_mine:'⚔ Dein Zug',turn_rival:'⏳ Zug des Rivalen',turn_label:'Runde',
+    profile_title:'Mein Profil',profile_elo:'ELO',profile_wins:'Siege',profile_losses:'Niederlagen',
+    profile_history:'Letzte Spiele',profile_no_games:'Noch keine Spiele.',
+    profile_back:'← Zurück',profile_logout:'Abmelden',
+    ranking_title:'🏆 Rangliste',ranking_sub:'Top Krieger',ranking_loading:'Lade...',
+    ranking_empty:'Noch keine Daten.',ranking_back:'← Zurück',
+    dice_title:'⚔ Kampfinitiative',dice_sub:'Höchstes Ergebnis greift zuerst an',
+    dice_roll:'🎲 Würfeln',dice_rolling:'⏳ Würfle...',dice_reroll:'🎲 Neu würfeln',
+    dice_draw:'Unentschieden! Nochmal würfeln...',dice_win_me:'Du hast die Initiative! Du greifst zuerst an.',
+    dice_win_rival:'Der Rivale hat die Initiative. Er greift zuerst an.',
+    wait_text:'Warte auf Rivalen...',win_victory:'Sieg!',win_defeat:'Niederlage',
+    win_draw:'Episches Unentschieden!',win_draw_sub:'Beide Armeen haben sich gegenseitig vernichtet.',
+    win_sub_win:'hat das Schlachtfeld dominiert.',win_sub_lose:'Der Rivale hat deine Armee vernichtet.',
+    win_new:'⚔ Neues Spiel',chat_title:'⚔ Kampf-Chat',chat_placeholder:'Nachricht...',
+    log_start:'Die Schlacht beginnt...',log_kill:'hat eliminiert',log_damage:'hat beschädigt',
+    log_hp:'LP',log_empty:'Leer — Runde verloren',
+    config_title:'⚙ Einstellungen',config_sub:'Verbinde dein Firebase',
+    config_connect:'Verbinden und Spiel suchen →',config_back:'← Zurück',loading:'Profil wird geladen...',
+  },
+  ja: {
+    name:'日本語', flag:'🇯🇵',
+    login_title:'イセカイ タクティカル',login_sub:'オンライン派閥バトル',
+    login_desc:'ログインして進捗を保存し、ランキングを上げ、同レベルのライバルに挑戦しましょう。',
+    login_btn:'Googleで続ける',login_error:'ログインエラー',
+    username_title:'名前を選んでください',username_sub:'戦場でのあなたのアイデンティティ',
+    username_placeholder:'戦士の名前...',username_hint:'3〜16文字。スペースなし。',
+    username_btn:'戦場へ →',username_taken:'その名前はすでに使用されています。',
+    username_invalid:'3〜16文字、スペースなし。',
+    home_tagline:'派閥を選べ。軍を展開せよ。敵を壊滅させろ。',
+    btn_play:'⚔ 対戦を探す',btn_profile:'👤 マイプロフィール',btn_rules:'📜 ルール',btn_ranking:'🏆 ランキング',
+    rules_title:'— 戦闘ルール —',
+    rules:`• 派閥を選ぶ（5種類、各8人の戦士）。
+• 8人の戦士を配置 — 1戦士 = 1マス。
+• 各ターン：戦士を選び敵の座標を攻撃。
+• ATK > DEF → 守備側即死。
+• ATK = DEF → 両者死亡。
+• ATK < DEF → 守備側耐久、ターン消費。
+• 空マス → ターン消費。
+• 敵の全戦士を倒した方が勝利。`,
+    match_connecting:'接続中...',match_searching:'同レベルのライバルを探しています...',
+    match_found:'ライバル発見！',match_waiting:'ルーム作成 — ライバル待機中...',
+    match_share:'友達にゲームをシェアしよう',match_cancel:'キャンセル',
+    faction_title:'派閥を選んでください',faction_sub:'軍を選択',
+    faction_confirm:'確認 ✓',faction_waiting_title:'ライバル待機中...',
+    place_phase:'配置',place_hint:'戦士を選んでマスをタップ',
+    place_hint_sel:'配置するマスをタップ',place_clear:'クリア',
+    place_ready:'準備完了 — 確認 ✓',place_waiting:'ライバル待機中...',
+    place_waiting_sub:'ライバルが戦士を配置中',
+    board_mine:'自分の領土',board_attack:'攻撃',
+    turn_mine:'⚔ あなたのターン',turn_rival:'⏳ ライバルのターン',turn_label:'ターン',
+    profile_title:'マイプロフィール',profile_elo:'ELO',profile_wins:'勝利',profile_losses:'敗北',
+    profile_history:'最近の試合',profile_no_games:'まだ試合なし。',
+    profile_back:'← 戻る',profile_logout:'サインアウト',
+    ranking_title:'🏆 ランキング',ranking_sub:'トップ戦士',ranking_loading:'読み込み中...',
+    ranking_empty:'まだデータなし。',ranking_back:'← 戻る',
+    dice_title:'⚔ 戦闘イニシアチブ',dice_sub:'高い方が先攻',
+    dice_roll:'🎲 サイコロを振る',dice_rolling:'⏳ 振っています...',dice_reroll:'🎲 もう一度',
+    dice_draw:'引き分け！もう一度振ります...',dice_win_me:'イニシアチブ獲得！先攻です。',
+    dice_win_rival:'ライバルがイニシアチブ獲得。ライバルが先攻。',
+    wait_text:'ライバル待機中...',win_victory:'勝利！',win_defeat:'敗北',
+    win_draw:'壮絶な引き分け！',win_draw_sub:'両軍が全滅しました。',
+    win_sub_win:'が戦場を制しました。',win_sub_lose:'ライバルがあなたの軍を壊滅させました。',
+    win_new:'⚔ 新しい対戦',chat_title:'⚔ バトルチャット',chat_placeholder:'メッセージ...',
+    log_start:'戦闘開始...',log_kill:'が倒した',log_damage:'がダメージ',
+    log_hp:'HP',log_empty:'空マス — ターン消費',
+    config_title:'⚙ 設定',config_sub:'Firebaseを接続',
+    config_connect:'接続して対戦を探す →',config_back:'← 戻る',loading:'プロフィール読み込み中...',
+  },
+  zh: {
+    name:'中文', flag:'🇨🇳',
+    login_title:'异世界战术',login_sub:'在线派系战斗',
+    login_desc:'登录以保存进度、提升排名并挑战同等级对手。',
+    login_btn:'使用Google继续',login_error:'登录错误',
+    username_title:'选择你的名字',username_sub:'你在战场上的身份',
+    username_placeholder:'战士名称...',username_hint:'3到16个字符，不含空格。',
+    username_btn:'进入战场 →',username_taken:'该名称已被使用。',
+    username_invalid:'3到16个字符，不含空格。',
+    home_tagline:'选择你的派系。部署你的军队。消灭敌人。',
+    btn_play:'⚔ 寻找对局',btn_profile:'👤 我的档案',btn_rules:'📜 规则',btn_ranking:'🏆 排行榜',
+    rules_title:'— 战斗规则 —',
+    rules:`• 选择你的派系（5个可选，每个8名战士）。
+• 放置你的8名战士 — 1名战士 = 1格。
+• 每回合：选择一名战士并攻击敌方坐标。
+• ATK > DEF → 防御者立即死亡。
+• ATK = DEF → 双方死亡。
+• ATK < DEF → 防御者抵抗，回合丢失。
+• 空格 → 回合丢失。
+• 消灭所有敌方战士者获胜。`,
+    match_connecting:'连接中...',match_searching:'正在寻找同等级对手...',
+    match_found:'找到对手！',match_waiting:'房间已创建 — 等待对手...',
+    match_share:'分享游戏给朋友',match_cancel:'取消',
+    faction_title:'选择你的派系',faction_sub:'选择你的军队',
+    faction_confirm:'确认 ✓',faction_waiting_title:'等待对手...',
+    place_phase:'部署',place_hint:'选择战士并点击格子',
+    place_hint_sel:'点击格子进行部署',place_clear:'清除',
+    place_ready:'准备好 — 确认 ✓',place_waiting:'等待对手...',
+    place_waiting_sub:'对手正在部署战士',
+    board_mine:'你的领土',board_attack:'攻击',
+    turn_mine:'⚔ 你的回合',turn_rival:'⏳ 对手回合',turn_label:'回合',
+    profile_title:'我的档案',profile_elo:'ELO',profile_wins:'胜利',profile_losses:'失败',
+    profile_history:'最近对局',profile_no_games:'暂无对局。',
+    profile_back:'← 返回',profile_logout:'退出登录',
+    ranking_title:'🏆 排行榜',ranking_sub:'顶级战士',ranking_loading:'加载中...',
+    ranking_empty:'暂无数据。',ranking_back:'← 返回',
+    dice_title:'⚔ 战斗主动权',dice_sub:'最高点数先攻',
+    dice_roll:'🎲 掷骰子',dice_rolling:'⏳ 掷骰中...',dice_reroll:'🎲 重新掷骰',
+    dice_draw:'平局！重新掷骰...',dice_win_me:'你获得了先攻权！你先攻击。',
+    dice_win_rival:'对手获得先攻权。对手先攻击。',
+    wait_text:'等待对手...',win_victory:'胜利！',win_defeat:'失败',
+    win_draw:'史诗平局！',win_draw_sub:'双方军队相互歼灭。',
+    win_sub_win:'主宰了战场。',win_sub_lose:'对手摧毁了你的军队。',
+    win_new:'⚔ 新对局',chat_title:'⚔ 战斗聊天',chat_placeholder:'消息...',
+    log_start:'战斗开始...',log_kill:'消灭了',log_damage:'伤害了',
+    log_hp:'HP',log_empty:'空格 — 回合丢失',
+    config_title:'⚙ 设置',config_sub:'连接你的Firebase',
+    config_connect:'连接并寻找对局 →',config_back:'← 返回',loading:'加载档案中...',
+  },
+};
+
+// ── Language detection and switching ──
+let currentLang = 'es';
+
+function detectLang(){
+  const saved = localStorage.getItem('isekai_lang');
+  if(saved && LANGS[saved]) return saved;
+  const browser = (navigator.language||navigator.userLanguage||'es').slice(0,2).toLowerCase();
+  const map = {es:'es',en:'en',pt:'pt',fr:'fr',it:'it',de:'de',ja:'ja',zh:'zh'};
+  return map[browser]||'es';
+}
+
+function t(key){ return LANGS[currentLang]?.[key] || LANGS.es[key] || key; }
+
+function setLang(lang){
+  if(!LANGS[lang]) return;
+  currentLang = lang;
+  localStorage.setItem('isekai_lang', lang);
+  applyLang();
+  // Close selector if open
+  const sel = document.getElementById('lang-selector');
+  if(sel) sel.classList.remove('show');
+}
+
+function applyLang(){
+  // Login
+  setText('login-title-el', t('login_title'));
+  setText('login-sub-el', t('login_sub'));
+  setText('login-desc-el', t('login_desc'));
+  setText('login-btn-el', t('login_btn'));
+  // Username
+  setText('username-title-el', t('username_title'));
+  setText('username-sub-el', t('username_sub'));
+  setAttr('username-input', 'placeholder', t('username_placeholder'));
+  setText('username-hint-el', t('username_hint'));
+  setText('username-btn-el', t('username_btn'));
+  // Home
+  setText('home-tagline-el', t('home_tagline'));
+  setText('btn-play-el', t('btn_play'));
+  setText('btn-profile-el', t('btn_profile'));
+  setText('btn-rules-el', t('btn_rules'));
+  setText('home-corner-br-el', t('btn_ranking'));
+  setText('rules-title-el', t('rules_title'));
+  setText('rules-text-el', t('rules'));
+  // Match
+  setText('match-info', t('match_searching'));
+  // Battle
+  setText('tab-mine', t('board_mine'));
+  setText('tab-enemy', t('board_attack'));
+  // Dice
+  setText('dice-title-el', t('dice_title'));
+  setText('dice-sub-el', t('dice_sub'));
+  const diceBtn=document.getElementById('dice-roll-btn');
+  if(diceBtn&&!diceBtn.disabled) diceBtn.textContent=t('dice_roll');
+  // Profile
+  setText('profile-title-el', t('profile_title'));
+  setText('profile-back-el', t('profile_back'));
+  setText('profile-logout-el', t('profile_logout'));
+  setAttr('stat-elo','data-label',t('profile_elo'));
+  // Ranking
+  setText('ranking-sub-el', t('ranking_sub'));
+  setText('ranking-back-el', t('ranking_back'));
+  // Update lang selector flag
+  const curr=document.getElementById('lang-current');
+  if(curr) curr.textContent=LANGS[currentLang].flag+' '+LANGS[currentLang].name;
+}
+
+function setText(id,text){
+  const el=document.getElementById(id);
+  if(el) el.textContent=text;
+}
+function setAttr(id,attr,val){
+  const el=document.getElementById(id);
+  if(el) el.setAttribute(attr,val);
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1258,7 +1929,7 @@ async function quickPlay(){
   if(!myProfile){showScreen('login');return;}
   showScreen('match');
   document.getElementById('match-spinner').textContent='🔍';
-  document.getElementById('match-info').textContent='Buscando rival de tu nivel...';
+  document.getElementById('match-info').textContent=t('match_searching');
   document.getElementById('match-sub').textContent=`Tu ELO: ${myProfile.elo}`;;
   startMatchmaking();
 }
@@ -1349,7 +2020,7 @@ async function startMatchmaking(){
       log: []
     });
 
-    document.getElementById('match-info').textContent='¡Rival encontrado!';
+    document.getElementById('match-info').textContent=t('match_found');
     document.getElementById('match-sub').textContent=`vs ${foundGame.data.username||'Rival'} (${foundGame.data.elo||STARTING_ELO} ELO)`;
     startFactionPhase();
   } else {
@@ -1371,8 +2042,8 @@ async function startMatchmaking(){
       log: []
     });
 
-    document.getElementById('match-info').textContent='Sala creada — esperando rival...';
-    document.getElementById('match-sub').textContent='Comparte el juego con un amigo para que se una';
+    document.getElementById('match-info').textContent=t('match_waiting');
+    document.getElementById('match-sub').textContent=t('match_share');
     document.getElementById('match-code').textContent=G.gameId.slice(-6).toUpperCase();
 
     // Wait for p2 to join
@@ -1559,7 +2230,7 @@ async function readyPlacement(){
   G.myBoard.forEach((row,ri)=>row.forEach((c,ci)=>{ if(c.wid) boardData.push({r:ri,c:ci,wid:c.wid}); }));
 
   await update(ref(db,'games/'+G.gameId+'/'+G.playerId),{ board: JSON.stringify(boardData), ready:true });
-  showWaiting('Esperando al rival...','El rival está colocando sus guerreros');
+  showWaiting(t('place_waiting'),t('place_waiting_sub'));
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1652,15 +2323,15 @@ async function resolveDice(p1val, p2val){
 
   if(p1val > p2val){
     firstTurn = 'p1';
-    msg.textContent = isP1 ? '¡Ganaste la iniciativa! Atacas primero.' : 'El rival ganó la iniciativa. Ataca primero.';
+    msg.textContent = isP1 ? t('dice_win_me') : t('dice_win_rival');
     msg.className = 'dice-winner-msg'+(isP1?'':' lose');
   } else if(p2val > p1val){
     firstTurn = 'p2';
-    msg.textContent = isP1 ? 'El rival ganó la iniciativa. Ataca primero.' : '¡Ganaste la iniciativa! Atacas primero.';
+    msg.textContent = isP1 ? t('dice_win_rival') : t('dice_win_me');
     msg.className = 'dice-winner-msg'+(isP1?' lose':'');
   } else {
     // Draw — delete node entirely and restart dice phase
-    msg.textContent = '¡Empate! Tirando de nuevo...';
+    msg.textContent = t('dice_draw');
     msg.className = 'dice-winner-msg draw';
 
     setTimeout(async()=>{
@@ -1673,7 +2344,7 @@ async function resolveDice(p1val, p2val){
       document.getElementById('dice-num-p1').textContent='—';
       document.getElementById('dice-num-p2').textContent='—';
       document.getElementById('dice-roll-btn').disabled=false;
-      document.getElementById('dice-roll-btn').textContent='🎲 Tirar de Nuevo';
+      document.getElementById('dice-roll-btn').textContent=t('dice_reroll');
       msg.textContent='';
 
       // Re-subscribe listener for new roll
@@ -1796,7 +2467,7 @@ function renderBattle(v){
   // Turn pill
   const pill=document.getElementById('battle-turn-pill');
   const wasMine = pill.classList.contains('my-turn');
-  pill.textContent=isMyTurn?'⚔ Tu turno':'⏳ Turno del rival';
+  pill.textContent=isMyTurn?t('turn_mine'):t('turn_rival');
   pill.className='turn-pill'+(isMyTurn?' my-turn':'');
   // Play your-turn sound when turn switches to you
   if(isMyTurn && !wasMine) playSound('your_turn');
@@ -1990,7 +2661,7 @@ async function doAttack(ri,ci,v){
 function renderLog(attacks,v){
   const box=document.getElementById('battle-log');
   box.innerHTML='';
-  if(!attacks||!attacks.length){ box.innerHTML='<div class="le sys">La batalla comienza...</div>'; return; }
+  if(!attacks||!attacks.length){ box.innerHTML=`<div class="le sys">${t('log_start')}</div>`; return; }
   attacks.forEach(a=>{
     const e=document.createElement('div');
     const atkF=factionById(v[a.attacker]?.faction);
@@ -2051,9 +2722,9 @@ async function handleGameOver(v){
   const deltaStr = delta>0?`+${delta} ELO`:`${delta} ELO`;
   if(won) playSound('victory');
   document.getElementById('win-emblem').textContent=draw?'⚡':(won?'🏆':'💀');
-  document.getElementById('win-title').textContent=draw?'¡Empate épico!':(won?'¡Victoria!':'Derrota');
+  document.getElementById('win-title').textContent=draw?t('win_draw'):(won?t('win_victory'):t('win_defeat'));
   document.getElementById('win-sub').innerHTML=draw
-    ?'Ambos ejércitos se aniquilaron.'
+    ?t('win_draw_sub')
     :(won
       ?`${f.emblem} ${f.name} dominó el campo de batalla.<br><span style="color:var(--green2);font-family:'Cinzel',serif">${deltaStr} · ${league.emoji} ${league.name}</span>`
       :`El rival destruyó tu ejército.<br><span style="color:var(--red2);font-family:'Cinzel',serif">${deltaStr} · ${league.emoji} ${league.name}</span>`);
@@ -2350,16 +3021,32 @@ window.selectFactionCard=selectFactionCard;
 window.loginGoogle=loginGoogle; window.saveUsername=saveUsername;
 window.doSignOut=doSignOut; window.renderRanking=renderRanking;
 window.showScreen=showScreen; window.toggleAudio=toggleAudio;
+// Register real implementations and flush any pending calls
+window.__toggleLangReal = toggleLangSelector;
+window.__setLangReal = setLang;
+window.__langReady = true;
+window.toggleLangSelector = toggleLangSelector;
+window.setLang = setLang;
+window._langToggle = toggleLangSelector;
+window._setLang = setLang;
+// Flush pending calls
+if(window.__langPending){ toggleLangSelector(); window.__langPending=false; }
+if(window.__langPendingLang){ setLang(window.__langPendingLang); window.__langPendingLang=null; }
 window.toggleChat=toggleChat; window.sendChat=sendChat;
 
 // ── AUTO INIT: Load Firebase + Auth on page load ──
 (async()=>{
+  // Init language first
+  currentLang = detectLang();
+  buildLangSelector();
+  applyLang();
+
   try{
     await loadFirebase(DEFAULT_CONFIG);
     await initAuth();
   }catch(e){
     console.error('Firebase init error:',e);
-    document.getElementById('login-error').textContent='Error de conexión: '+e.message;
+    document.getElementById('login-error').textContent=t('login_error')+': '+e.message;
   }
 })();
 
@@ -2371,6 +3058,18 @@ if('serviceWorker' in navigator){
       .catch(e=>console.warn('SW error:',e));
   });
 }
+</script>
+<script>
+// Stub for lang selector — safe to call before module loads
+window.toggleLangSelector=function(){
+  if(window.__langReady) return window.__toggleLangReal();
+  // Queue it — module not ready yet, will run once loaded
+  window.__langPending=true;
+};
+window.setLang=function(l){
+  if(window.__langReady) return window.__setLangReal(l);
+  window.__langPendingLang=l;
+};
 </script>
 </body>
 </html>
