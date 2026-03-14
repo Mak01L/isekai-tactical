@@ -150,7 +150,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .gh{display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.62rem;color:var(--text3);}
 .cell{background:var(--bg3);border:1px solid var(--border);border-radius:2px;
   display:flex;align-items:center;justify-content:center;cursor:default;
-  transition:background .1s,border-color .1s;user-select:none;position:relative;}
+  transition:background .1s,border-color .1s;user-select:none;position:relative;overflow:hidden;}
+.hp-bar-wrap{position:absolute;bottom:2px;left:3px;right:3px;height:4px;background:rgba(0,0,0,.5);border-radius:2px;}
+.hp-bar-fill{height:4px;border-radius:2px;transition:width .3s;}
 .cell.clickable{cursor:pointer;}
 .cell.clickable:active{border-color:var(--gold);background:rgba(212,168,67,.08);}
 .cell.own-unit{cursor:pointer;}
@@ -1670,10 +1672,12 @@ function renderBattle(v){
       const curHP=(window._hpMap&&window._hpMap[hpKey]!==undefined)?window._hpMap[hpKey]:maxHP;
       const hpPct=Math.max(0,Math.round((curHP/maxHP)*100));
       const hpColor=hpPct>60?'#2ecc71':hpPct>30?'#f39c12':'#e74c3c';
-      cell.innerHTML=`<span class="cell-icon">${w.icon}</span>
-        <div style="position:absolute;bottom:2px;left:2px;right:2px;height:3px;background:rgba(0,0,0,.4);border-radius:2px">
-          <div style="width:${hpPct}%;height:100%;background:${hpColor};border-radius:2px;transition:width .3s"></div>
-        </div>`;
+      cell.style.flexDirection='column';
+      cell.style.justifyContent='center';
+      cell.style.gap='2px';
+      cell.style.paddingBottom='6px';
+      cell.innerHTML=`<span class="cell-icon" style="font-size:18px;line-height:1">${w.icon}</span>
+        <div class="hp-bar-wrap"><div class="hp-bar-fill" style="width:${hpPct}%;background:${hpColor}"></div></div>`;
       cell.style.background=rgba(f.color,.2); cell.style.borderColor=rgba(f.color,.6);
       if(isMyTurn){
         cell.classList.add('own-unit');
