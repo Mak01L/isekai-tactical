@@ -2067,18 +2067,10 @@ let menuAudio = null;
 let battleAudio = null;
 let audioCtx = null;
 
-// Real audio sources — royalty-free, CORS-enabled
+// Local audio files — hosted in the same GitHub repo
 const AUDIO_SOURCES = {
-  // Menu: peaceful medieval harp/lute from Internet Archive (CC0/Public Domain)
-  menu: [
-    'https://ia800905.us.archive.org/0/items/medieval-instrumental-background-music/01%20-%20The%20Wanderer.mp3',
-    'https://ia800905.us.archive.org/0/items/medieval-instrumental-background-music/02%20-%20Mystical%20Forest.mp3',
-    'https://ia800905.us.archive.org/0/items/medieval-instrumental-background-music/03%20-%20Castle%20in%20the%20Mist.mp3',
-  ],
-  // Battle: epic medieval orchestral from Internet Archive
-  battle: [
-    'https://ia803404.us.archive.org/17/items/1HourOfMedievalInstrumentalMusicMedievalLife/1HourOfMedievalInstrumentalMusicMedievalLife.mp3',
-  ]
+  menu:   ['menu-music.mp3'],
+  battle: ['battle-music.mp3']
 };
 
 function getAudioCtx(){
@@ -2102,10 +2094,8 @@ function toggleAudio(){
 
 function createAudioEl(src, volume, loop){
   const a = new Audio();
-  a.crossOrigin = 'anonymous';
   a.volume = volume;
   a.loop = loop;
-  // Try sources until one works
   const sources = Array.isArray(src) ? src : [src];
   let idx = 0;
   const tryNext = () => {
@@ -2113,7 +2103,7 @@ function createAudioEl(src, volume, loop){
     a.src = sources[idx++];
     a.load();
   };
-  a.onerror = () => { tryNext(); };
+  a.onerror = () => { console.warn('Audio error, trying next source'); tryNext(); };
   tryNext();
   return a;
 }
