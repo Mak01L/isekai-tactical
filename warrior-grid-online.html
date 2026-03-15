@@ -1569,6 +1569,30 @@ function setAttr(id,attr,val){
   if(el) el.setAttribute(attr,val);
 }
 
+function buildLangSelector(){
+  const sel = document.getElementById('lang-selector');
+  if(!sel) return;
+  sel.innerHTML = Object.entries(LANGS).map(([code,l])=>
+    `<div class="lang-option${code===currentLang?' active':''}" onclick="window.setLang&&window.setLang('${code}')">
+      <span>${l.flag}</span><span>${l.name}</span>
+    </div>`
+  ).join('');
+}
+
+function toggleLangSelector(){
+  const sel = document.getElementById('lang-selector');
+  if(sel) sel.classList.toggle('show');
+}
+
+// Close lang selector when clicking outside
+document.addEventListener('click', e=>{
+  const sel=document.getElementById('lang-selector');
+  const btn=document.getElementById('lang-btn');
+  if(sel&&btn&&!sel.contains(e.target)&&!btn.contains(e.target)){
+    sel.classList.remove('show');
+  }
+});
+
 // ══════════════════════════════════════════════════════════
 // ELO + LEAGUES SYSTEM
 // ══════════════════════════════════════════════════════════
@@ -3105,18 +3129,24 @@ if(window.__pendingQuickPlay){ quickPlay(); }
 
 // ── AUTO INIT ──
 (async()=>{
-  currentLang = detectLang();
-  buildLangSelector();
-  applyLang();
   try{
+    // Init language
+    currentLang = detectLang();
+    buildLangSelector();
+    applyLang();
+
+    // Load Firebase
     await loadFirebase(DEFAULT_CONFIG);
+
     // Flush pending login AFTER firebase is ready
     if(window.__pendingLogin){ window.__pendingLogin=false; await loginGoogle(); }
+
+    // Init auth
     await initAuth();
   }catch(e){
-    console.error('Firebase init error:',e);
+    console.error('Init error:',e);
     const el=document.getElementById('login-error');
-    if(el) el.textContent=t('login_error')+': '+e.message;
+    if(el) el.textContent=(t('login_error')||'Error')+': '+e.message;
   }
 })();
 
