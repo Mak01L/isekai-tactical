@@ -3084,74 +3084,39 @@ function updateChatBtn(show){
   if(!show && chatOpen) toggleChat();
 }
 
-// ══════════════════════════════════════════════════════════
-// Expose to inline onclick
+// ── Module ready: expose all functions ──
+window.__moduleReady=true;
+// Direct references
 window.goHome=goHome; window.quickPlay=quickPlay; window.rollMyDice=rollMyDice;
-window.goConfig=goConfig; window.showRules=showRules;
+window.goConfig=goConfig; window.showRules=showRules; window.showScreen=showScreen;
 window.connectFirebase=connectFirebase; window.cancelMatch=cancelMatch;
 window.confirmFaction=confirmFaction; window.clearPlacement=clearPlacement;
 window.readyPlacement=readyPlacement; window.switchBoard=switchBoard;
-window.selectFactionCard=selectFactionCard;
-window.loginGoogle=loginGoogle; window.saveUsername=saveUsername;
-window.doSignOut=doSignOut; window.renderRanking=renderRanking;
-window.showScreen=showScreen; window.toggleAudio=toggleAudio;
-// Register ALL real functions and mark module as ready
-window.__moduleReady = true;
-window.__realLoginGoogle     = loginGoogle;
-window.__realSaveUsername    = saveUsername;
-window.__realQuickPlay       = quickPlay;
-window.__realShowRules       = showRules;
-window.__realShowScreen      = showScreen;
-window.__realDoSignOut       = doSignOut;
-window.__realConfirmFaction  = confirmFaction;
-window.__realClearPlacement  = clearPlacement;
-window.__realReadyPlacement  = readyPlacement;
-window.__realSwitchBoard     = switchBoard;
-window.__realRollMyDice      = rollMyDice;
-window.__realToggleAudio     = toggleAudio;
-window.__realToggleChat      = toggleChat;
-window.__realSendChat        = sendChat;
-window.__realSelectFactionCard = selectFactionCard;
-window.__realCancelMatch     = cancelMatch;
-window.__realRenderRanking   = renderRanking;
-window.__realGoHome          = goHome;
-window.__realConnectFirebase = connectFirebase;
-window.__realGoConfig        = goConfig;
-window.__toggleLangReal      = toggleLangSelector;
-window.__setLangReal         = setLang;
-// Overwrite stubs with direct references
-window.loginGoogle=loginGoogle; window.saveUsername=saveUsername;
-window.quickPlay=quickPlay; window.showRules=showRules;
-window.showScreen=showScreen; window.doSignOut=doSignOut;
-window.confirmFaction=confirmFaction; window.clearPlacement=clearPlacement;
-window.readyPlacement=readyPlacement; window.switchBoard=switchBoard;
-window.rollMyDice=rollMyDice; window.toggleAudio=toggleAudio;
+window.selectFactionCard=selectFactionCard; window.loginGoogle=loginGoogle;
+window.saveUsername=saveUsername; window.doSignOut=doSignOut;
+window.renderRanking=renderRanking; window.toggleAudio=toggleAudio;
 window.toggleChat=toggleChat; window.sendChat=sendChat;
-window.selectFactionCard=selectFactionCard; window.cancelMatch=cancelMatch;
-window.renderRanking=renderRanking; window.goHome=goHome;
-window.connectFirebase=connectFirebase; window.goConfig=goConfig;
 window.toggleLangSelector=toggleLangSelector; window.setLang=setLang;
-// Flush pending calls
-if(window.__pendingLogin){ loginGoogle(); window.__pendingLogin=false; }
-if(window.__pendingSaveUsername){ saveUsername(); window.__pendingSaveUsername=false; }
-if(window.__pendingQuickPlay){ quickPlay(); window.__pendingQuickPlay=false; }
-if(window.__pendingLang){ toggleLangSelector(); window.__pendingLang=false; }
-if(window.__pendingSetLang){ setLang(window.__pendingSetLang); window.__pendingSetLang=null; }
-window.toggleChat=toggleChat; window.sendChat=sendChat;
+// Flush pending clicks that happened before module loaded
+if(window.__pendingLang){ toggleLangSelector(); }
+if(window.__pendingSetLang){ setLang(window.__pendingSetLang); }
+if(window.__pendingQuickPlay){ quickPlay(); }
+// Note: login pending is flushed AFTER Firebase loads below
 
-// ── AUTO INIT: Load Firebase + Auth on page load ──
+// ── AUTO INIT ──
 (async()=>{
-  // Init language first
   currentLang = detectLang();
   buildLangSelector();
   applyLang();
-
   try{
     await loadFirebase(DEFAULT_CONFIG);
+    // Flush pending login AFTER firebase is ready
+    if(window.__pendingLogin){ window.__pendingLogin=false; await loginGoogle(); }
     await initAuth();
   }catch(e){
     console.error('Firebase init error:',e);
-    document.getElementById('login-error').textContent=t('login_error')+': '+e.message;
+    const el=document.getElementById('login-error');
+    if(el) el.textContent=t('login_error')+': '+e.message;
   }
 })();
 
